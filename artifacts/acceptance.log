@@ -1,0 +1,10 @@
+PASS DEP-01/04 all required components ready
+PASS DEP-01 process topology
+PASS MET-01 real pushed request counts
+PASS HLT-01 external probes
+PASS STA-01 expected inventory visible
+PASS SEC-02 resource and role authorization
+PASS LOG-01/TRC-01 stored correlated signals
+PASS UI-01 provisioned Grafana resources
+PASS HLT-02/INC-01 fault and recovery
+PASS ALT-01 local Grafana notification delivery

@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "imageArchitecture": "amd64",
+  "execution": "Docker Desktop emulation on Apple Silicon",
+  "assertions": [
+    "all 9 supervised processes running",
+    "actual backend configurations accepted",
+    "gateway and evaluator readiness"
+  ]
+}

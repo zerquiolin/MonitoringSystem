@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "fault": "actual cgroup kernel OOM at 192 MiB",
+  "recovery": "same isolated volume, restarted at 3 GiB",
+  "network": "none",
+  "productionResourcesChanged": false
+}

@@ -1,0 +1,6 @@
+Running prometheus retention
+PASS prometheus
+Running loki retention
+PASS loki
+Running tempo retention
+PASS tempo

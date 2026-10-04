@@ -1,0 +1,70 @@
+server:
+  http_listen_address: 127.0.0.1
+  http_listen_port: 3200
+  grpc_listen_address: 127.0.0.1
+  grpc_listen_port: 9096
+  log_level: warn
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 127.0.0.1:4317
+        http:
+          endpoint: 127.0.0.1:4319
+  ring:
+    instance_addr: 127.0.0.1
+    instance_interface_names:
+    - lo
+ingester:
+  trace_idle_period: 5s
+  max_block_duration: 1m
+  lifecycler:
+    address: 127.0.0.1
+    interface_names:
+    - lo
+    ring:
+      replication_factor: 1
+storage:
+  trace:
+    backend: local
+    wal:
+      path: /data/tempo/wal
+    local:
+      path: /data/tempo/blocks
+compactor:
+  compaction:
+    block_retention: 48h
+  ring:
+    instance_addr: 127.0.0.1
+    instance_interface_names:
+    - lo
+metrics_generator:
+  registry:
+    external_labels:
+      source: tempo
+  storage:
+    path: /data/tempo/generator
+    remote_write:
+    - url: http://127.0.0.1:9090/api/v1/write
+      send_exemplars: true
+  traces_storage:
+    path: /data/tempo/generator-traces
+  processor:
+    service_graphs:
+      dimensions:
+      - project
+      - environment
+  ring:
+    instance_addr: 127.0.0.1
+    instance_interface_names:
+    - lo
+overrides:
+  defaults:
+    metrics_generator:
+      processors:
+      - service-graphs
+      - span-metrics
+      - local-blocks
+usage_report:
+  reporting_enabled: false

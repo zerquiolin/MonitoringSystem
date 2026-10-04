@@ -1,0 +1,16 @@
+ Container portable-observability-monitoring-1 Stopping
+ Container portable-observability-monitoring-1 Stopped
+ Container portable-observability-monitoring-1 Starting
+ Container portable-observability-monitoring-1 Started
+Stopped-stack backup saved; monitoring was unavailable during the copy.
+portable-restore-test-1791132087
+Restored isolated volume. Use archive inventory/secrets and verify signals before any operational replacement.
+ Container portable-observability-monitoring-1 Stopping
+ Container portable-observability-monitoring-1 Stopped
+019d5d31179cd884befb93f201d6278502056a98fb25d0255424af2ce4522052
+Flag --time has been deprecated, use --timeout instead
+portable-restore-test-1791132087
+portable-restore-test-1791132087
+ Container portable-observability-monitoring-1 Starting
+ Container portable-observability-monitoring-1 Started
+Isolated offline backup/restore assertions passed

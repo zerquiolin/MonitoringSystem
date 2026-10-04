@@ -1,0 +1,2767 @@
+{
+  "uid": "incidents",
+  "title": "Uptime & reliability",
+  "description": "Portable observability \u00b7 Expected inventory, explicit coverage and scope. Uptime/downtime reports follow the selected time range.",
+  "schemaVersion": 40,
+  "version": 2,
+  "tags": [
+    "portable-observability"
+  ],
+  "editable": false,
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "refresh": "15s",
+  "tooltip": 1,
+  "templating": {
+    "list": [
+      {
+        "name": "project",
+        "label": "Project",
+        "type": "query",
+        "datasource": {
+          "uid": "prometheus",
+          "type": "prometheus"
+        },
+        "query": "label_values(monitoring_expected_instance,project)",
+        "refresh": 1,
+        "includeAll": true,
+        "allValue": ".*",
+        "multi": true,
+        "hide": 0,
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        }
+      },
+      {
+        "name": "service",
+        "label": "Service",
+        "type": "query",
+        "datasource": {
+          "uid": "prometheus",
+          "type": "prometheus"
+        },
+        "query": "label_values(monitoring_expected_instance,service)",
+        "refresh": 1,
+        "includeAll": true,
+        "allValue": ".*",
+        "multi": true,
+        "hide": 0,
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        }
+      },
+      {
+        "name": "environment",
+        "label": "Environment",
+        "type": "query",
+        "datasource": {
+          "uid": "prometheus",
+          "type": "prometheus"
+        },
+        "query": "label_values(monitoring_expected_instance,environment)",
+        "refresh": 1,
+        "includeAll": true,
+        "allValue": ".*",
+        "multi": true,
+        "hide": 0,
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        }
+      },
+      {
+        "name": "instance",
+        "label": "Instance",
+        "type": "query",
+        "datasource": {
+          "uid": "prometheus",
+          "type": "prometheus"
+        },
+        "query": "label_values(monitoring_expected_instance,instance)",
+        "refresh": 1,
+        "includeAll": true,
+        "allValue": ".*",
+        "multi": true,
+        "hide": 0,
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        }
+      },
+      {
+        "name": "host",
+        "label": "Host",
+        "type": "query",
+        "datasource": {
+          "uid": "prometheus",
+          "type": "prometheus"
+        },
+        "query": "label_values(app_host_memory_total_bytes,hostId)",
+        "refresh": 1,
+        "includeAll": true,
+        "allValue": ".*",
+        "multi": true,
+        "hide": 2,
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        }
+      }
+    ]
+  },
+  "links": [
+    {
+      "title": "Overview",
+      "url": "/d/overview",
+      "type": "link",
+      "includeVars": true,
+      "keepTime": true
+    },
+    {
+      "title": "Projects",
+      "url": "/d/project",
+      "type": "link",
+      "includeVars": true,
+      "keepTime": true
+    },
+    {
+      "title": "Service detail",
+      "url": "/d/service",
+      "type": "link",
+      "includeVars": true,
+      "keepTime": true
+    },
+    {
+      "title": "Infrastructure",
+      "url": "/d/infrastructure",
+      "type": "link",
+      "includeVars": true,
+      "keepTime": true
+    },
+    {
+      "title": "Logs & errors",
+      "url": "/d/logs",
+      "type": "link",
+      "includeVars": true,
+      "keepTime": true
+    },
+    {
+      "title": "Traces & dependencies",
+      "url": "/d/traces",
+      "type": "link",
+      "includeVars": true,
+      "keepTime": true
+    },
+    {
+      "title": "Uptime & reliability",
+      "url": "/d/incidents",
+      "type": "link",
+      "includeVars": true,
+      "keepTime": true
+    },
+    {
+      "title": "Monitoring health",
+      "url": "/d/monitoring",
+      "type": "link",
+      "includeVars": true,
+      "keepTime": true
+    }
+  ],
+  "panels": [
+    {
+      "id": 1,
+      "title": "Uptime, downtime & observation coverage",
+      "type": "table",
+      "description": "Filtered by project, service, environment and instance. Missing observations show No data.",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 8
+      },
+      "datasource": {
+        "uid": "control",
+        "type": "yesoreyeram-infinity-datasource"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "uid": "control",
+            "type": "yesoreyeram-infinity-datasource"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://127.0.0.1:8000/api/reliability?project=${project:regex}&service=${service:regex}&environment=${environment:regex}&instance=${instance:regex}&start=${__from}&end=${__to}",
+          "url_options": {
+            "method": "GET",
+            "data": "",
+            "headers": [],
+            "params": []
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "",
+          "columns": [
+            {
+              "selector": "service",
+              "text": "service",
+              "type": "string"
+            },
+            {
+              "selector": "availability",
+              "text": "availability",
+              "type": "number"
+            },
+            {
+              "selector": "uptimeSeconds",
+              "text": "uptimeSeconds",
+              "type": "number"
+            },
+            {
+              "selector": "downtimeSeconds",
+              "text": "downtimeSeconds",
+              "type": "number"
+            },
+            {
+              "selector": "unknownSeconds",
+              "text": "unknownSeconds",
+              "type": "number"
+            },
+            {
+              "selector": "maintenanceSeconds",
+              "text": "maintenanceSeconds",
+              "type": "number"
+            },
+            {
+              "selector": "coverage",
+              "text": "coverage",
+              "type": "number"
+            },
+            {
+              "selector": "project",
+              "text": "project",
+              "type": "string"
+            },
+            {
+              "selector": "environment",
+              "text": "environment",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "\u2014",
+          "decimals": 2,
+          "custom": {
+            "align": "left",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Service"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.width",
+                "value": 140
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Service detail",
+                    "url": "/d/service?var-project=${__data.fields.Project}&var-service=${__value.raw}&var-environment=${__data.fields.Environment}&from=${__from}&to=${__to}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Availability"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Uptime"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "s"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.width",
+                "value": 95
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Downtime"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "s"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.width",
+                "value": 95
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Unknown time"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "s"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.width",
+                "value": 95
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Maintenance"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "s"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.width",
+                "value": 95
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Coverage"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Project"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Environment"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "sortBy": [
+          {
+            "displayName": "Service",
+            "desc": false
+          }
+        ],
+        "footer": {
+          "show": false
+        }
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "indexByName": {
+              "service": 0,
+              "availability": 1,
+              "uptimeSeconds": 2,
+              "downtimeSeconds": 3,
+              "unknownSeconds": 4,
+              "maintenanceSeconds": 5,
+              "coverage": 6,
+              "project": 7,
+              "environment": 8
+            },
+            "renameByName": {
+              "service": "Service",
+              "availability": "Availability",
+              "uptimeSeconds": "Uptime",
+              "downtimeSeconds": "Downtime",
+              "unknownSeconds": "Unknown time",
+              "maintenanceSeconds": "Maintenance",
+              "coverage": "Coverage",
+              "project": "Project",
+              "environment": "Environment"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Incidents & recovery",
+      "type": "table",
+      "description": "Filtered by project, service, environment and instance. Missing observations show No data.",
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 24,
+        "h": 6
+      },
+      "datasource": {
+        "uid": "control",
+        "type": "yesoreyeram-infinity-datasource"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "uid": "control",
+            "type": "yesoreyeram-infinity-datasource"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://127.0.0.1:8000/api/reliability?project=${project:regex}&service=${service:regex}&environment=${environment:regex}&instance=${instance:regex}&start=${__from}&end=${__to}",
+          "url_options": {
+            "method": "GET",
+            "data": "",
+            "headers": [],
+            "params": []
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "",
+          "columns": [
+            {
+              "selector": "service",
+              "text": "service",
+              "type": "string"
+            },
+            {
+              "selector": "incidentCount",
+              "text": "incidentCount",
+              "type": "number"
+            },
+            {
+              "selector": "activeIncidents",
+              "text": "activeIncidents",
+              "type": "number"
+            },
+            {
+              "selector": "mttrSeconds",
+              "text": "mttrSeconds",
+              "type": "number"
+            },
+            {
+              "selector": "meanAcknowledgmentSeconds",
+              "text": "meanAcknowledgmentSeconds",
+              "type": "number"
+            },
+            {
+              "selector": "degradedSeconds",
+              "text": "degradedSeconds",
+              "type": "number"
+            },
+            {
+              "selector": "project",
+              "text": "project",
+              "type": "string"
+            },
+            {
+              "selector": "environment",
+              "text": "environment",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "\u2014",
+          "decimals": 2,
+          "custom": {
+            "align": "left",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Service"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.width",
+                "value": 140
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Service detail",
+                    "url": "/d/service?var-project=${__data.fields.Project}&var-service=${__value.raw}&var-environment=${__data.fields.Environment}&from=${__from}&to=${__to}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Incidents"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Open incidents"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Mean recovery"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "s"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.width",
+                "value": 95
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Mean acknowledgment"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "s"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.width",
+                "value": 95
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Degraded"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "s"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.width",
+                "value": 95
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Project"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Environment"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "sortBy": [
+          {
+            "displayName": "Service",
+            "desc": false
+          }
+        ],
+        "footer": {
+          "show": false
+        }
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "indexByName": {
+              "service": 0,
+              "incidentCount": 1,
+              "activeIncidents": 2,
+              "mttrSeconds": 3,
+              "meanAcknowledgmentSeconds": 4,
+              "degradedSeconds": 5,
+              "project": 6,
+              "environment": 7
+            },
+            "renameByName": {
+              "service": "Service",
+              "incidentCount": "Incidents",
+              "activeIncidents": "Open incidents",
+              "mttrSeconds": "Mean recovery",
+              "meanAcknowledgmentSeconds": "Mean acknowledgment",
+              "degradedSeconds": "Degraded",
+              "project": "Project",
+              "environment": "Environment"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "SLOs & error budgets \u00b7 configured windows",
+      "type": "table",
+      "description": "Filtered by project, service, environment and instance. Missing observations show No data.",
+      "gridPos": {
+        "x": 0,
+        "y": 14,
+        "w": 24,
+        "h": 8
+      },
+      "datasource": {
+        "uid": "control",
+        "type": "yesoreyeram-infinity-datasource"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "uid": "control",
+            "type": "yesoreyeram-infinity-datasource"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://127.0.0.1:8000/api/objectives?project=${project:regex}&service=${service:regex}&environment=${environment:regex}&instance=${instance:regex}&start=${__from}&end=${__to}",
+          "url_options": {
+            "method": "GET",
+            "data": "",
+            "headers": [],
+            "params": []
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "",
+          "columns": [
+            {
+              "selector": "service",
+              "text": "service",
+              "type": "string"
+            },
+            {
+              "selector": "objective",
+              "text": "objective",
+              "type": "string"
+            },
+            {
+              "selector": "route",
+              "text": "route",
+              "type": "string"
+            },
+            {
+              "selector": "sli",
+              "text": "sli",
+              "type": "number"
+            },
+            {
+              "selector": "target",
+              "text": "target",
+              "type": "number"
+            },
+            {
+              "selector": "compliance",
+              "text": "compliance",
+              "type": "string"
+            },
+            {
+              "selector": "project",
+              "text": "project",
+              "type": "string"
+            },
+            {
+              "selector": "environment",
+              "text": "environment",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "\u2014",
+          "decimals": 2,
+          "custom": {
+            "align": "left",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Service"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.width",
+                "value": 140
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Service detail",
+                    "url": "/d/service?var-project=${__data.fields.Project}&var-service=${__value.raw}&var-environment=${__data.fields.Environment}&from=${__from}&to=${__to}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Objective"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Route"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Measured"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Target"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Result"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "UP": {
+                        "text": "UP",
+                        "color": "green",
+                        "index": 0
+                      },
+                      "DOWN": {
+                        "text": "DOWN",
+                        "color": "red",
+                        "index": 1
+                      },
+                      "DEGRADED": {
+                        "text": "DEGRADED",
+                        "color": "orange",
+                        "index": 2
+                      },
+                      "UNKNOWN": {
+                        "text": "UNKNOWN",
+                        "color": "gray",
+                        "index": 3
+                      },
+                      "MAINTENANCE": {
+                        "text": "MAINTENANCE",
+                        "color": "blue",
+                        "index": 4
+                      },
+                      "DRAINING": {
+                        "text": "DRAINING",
+                        "color": "purple",
+                        "index": 5
+                      },
+                      "RETIRED": {
+                        "text": "RETIRED",
+                        "color": "gray",
+                        "index": 6
+                      },
+                      "OPEN": {
+                        "text": "OPEN",
+                        "color": "red",
+                        "index": 7
+                      },
+                      "RESOLVED": {
+                        "text": "RESOLVED",
+                        "color": "green",
+                        "index": 8
+                      },
+                      "MET": {
+                        "text": "MET",
+                        "color": "green",
+                        "index": 9
+                      },
+                      "MISSED": {
+                        "text": "MISSED",
+                        "color": "red",
+                        "index": 10
+                      },
+                      "INSUFFICIENT_DATA": {
+                        "text": "INSUFFICIENT_DATA",
+                        "color": "gray",
+                        "index": 11
+                      },
+                      "SUPPORTED": {
+                        "text": "SUPPORTED",
+                        "color": "green",
+                        "index": 12
+                      },
+                      "UNSUPPORTED": {
+                        "text": "UNSUPPORTED",
+                        "color": "gray",
+                        "index": 13
+                      },
+                      "DISABLED": {
+                        "text": "DISABLED",
+                        "color": "gray",
+                        "index": 14
+                      }
+                    }
+                  },
+                  {
+                    "type": "special",
+                    "options": {
+                      "match": "null",
+                      "result": {
+                        "text": "No data",
+                        "color": "gray"
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 170
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Project"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Environment"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "sortBy": [
+          {
+            "displayName": "Service",
+            "desc": false
+          }
+        ],
+        "footer": {
+          "show": false
+        }
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "indexByName": {
+              "service": 0,
+              "objective": 1,
+              "route": 2,
+              "sli": 3,
+              "target": 4,
+              "compliance": 5,
+              "project": 6,
+              "environment": 7
+            },
+            "renameByName": {
+              "service": "Service",
+              "objective": "Objective",
+              "route": "Route",
+              "sli": "Measured",
+              "target": "Target",
+              "compliance": "Result",
+              "project": "Project",
+              "environment": "Environment"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Remaining error budgets",
+      "type": "table",
+      "description": "Filtered by project, service, environment and instance. Missing observations show No data.",
+      "gridPos": {
+        "x": 0,
+        "y": 22,
+        "w": 24,
+        "h": 7
+      },
+      "datasource": {
+        "uid": "control",
+        "type": "yesoreyeram-infinity-datasource"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "uid": "control",
+            "type": "yesoreyeram-infinity-datasource"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://127.0.0.1:8000/api/objectives?project=${project:regex}&service=${service:regex}&environment=${environment:regex}&instance=${instance:regex}&start=${__from}&end=${__to}",
+          "url_options": {
+            "method": "GET",
+            "data": "",
+            "headers": [],
+            "params": []
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "",
+          "columns": [
+            {
+              "selector": "service",
+              "text": "service",
+              "type": "string"
+            },
+            {
+              "selector": "objective",
+              "text": "objective",
+              "type": "string"
+            },
+            {
+              "selector": "route",
+              "text": "route",
+              "type": "string"
+            },
+            {
+              "selector": "budgetRemaining",
+              "text": "budgetRemaining",
+              "type": "number"
+            },
+            {
+              "selector": "windowSeconds",
+              "text": "windowSeconds",
+              "type": "number"
+            },
+            {
+              "selector": "project",
+              "text": "project",
+              "type": "string"
+            },
+            {
+              "selector": "environment",
+              "text": "environment",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "\u2014",
+          "decimals": 2,
+          "custom": {
+            "align": "left",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Service"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.width",
+                "value": 140
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Service detail",
+                    "url": "/d/service?var-project=${__data.fields.Project}&var-service=${__value.raw}&var-environment=${__data.fields.Environment}&from=${__from}&to=${__to}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Objective"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Route"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Budget remaining"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Window"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "s"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.width",
+                "value": 95
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Project"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Environment"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "sortBy": [
+          {
+            "displayName": "Service",
+            "desc": false
+          }
+        ],
+        "footer": {
+          "show": false
+        }
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "indexByName": {
+              "service": 0,
+              "objective": 1,
+              "route": 2,
+              "budgetRemaining": 3,
+              "windowSeconds": 4,
+              "project": 5,
+              "environment": 6
+            },
+            "renameByName": {
+              "service": "Service",
+              "objective": "Objective",
+              "route": "Route",
+              "budgetRemaining": "Budget remaining",
+              "windowSeconds": "Window",
+              "project": "Project",
+              "environment": "Environment"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Service state history",
+      "type": "timeseries",
+      "description": "Raw observations before incident debounce. UNKNOWN is distinct from DOWN.",
+      "gridPos": {
+        "x": 0,
+        "y": 29,
+        "w": 12,
+        "h": 7
+      },
+      "datasource": {
+        "uid": "prometheus",
+        "type": "prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "uid": "prometheus",
+            "type": "prometheus"
+          },
+          "expr": "monitoring_service_state{project=~\"$project\",service=~\"$service\",environment=~\"$environment\"} == 1",
+          "legendFormat": "{{service}} \u00b7 {{state}}",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 2,
+          "noValue": "No data",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "spanNulls": false
+          },
+          "links": [
+            {
+              "title": "Service detail",
+              "url": "/d/service?${project:queryparam}&var-service=${__field.labels.service}&${environment:queryparam}&${instance:queryparam}&from=${__from}&to=${__to}"
+            },
+            {
+              "title": "Logs for this service",
+              "url": "/d/logs?${project:queryparam}&var-service=${__field.labels.service}&${environment:queryparam}&from=${__from}&to=${__to}"
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "transformations": []
+    },
+    {
+      "id": 6,
+      "title": "Availability budget burn \u00b7 1h and 6h",
+      "type": "timeseries",
+      "description": "Failure fraction / allowed error fraction. Requires at least 95% known coverage; missing coverage is not compliance.",
+      "gridPos": {
+        "x": 12,
+        "y": 29,
+        "w": 12,
+        "h": 7
+      },
+      "datasource": {
+        "uid": "prometheus",
+        "type": "prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "uid": "prometheus",
+            "type": "prometheus"
+          },
+          "expr": "monitoring_service_burn_rate{project=~\"$project\",service=~\"$service\",environment=~\"$environment\",window=~\"1h|6h\"}",
+          "legendFormat": "{{service}} \u00b7 {{window}}",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 2,
+          "noValue": "No data",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "spanNulls": false
+          },
+          "links": [
+            {
+              "title": "Service detail",
+              "url": "/d/service?${project:queryparam}&var-service=${__field.labels.service}&${environment:queryparam}&${instance:queryparam}&from=${__from}&to=${__to}"
+            },
+            {
+              "title": "Logs for this service",
+              "url": "/d/logs?${project:queryparam}&var-service=${__field.labels.service}&${environment:queryparam}&from=${__from}&to=${__to}"
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "transformations": []
+    },
+    {
+      "id": 7,
+      "title": "Incident history",
+      "type": "table",
+      "description": "Filtered by project, service, environment and instance. Missing observations show No data.",
+      "gridPos": {
+        "x": 0,
+        "y": 36,
+        "w": 24,
+        "h": 8
+      },
+      "datasource": {
+        "uid": "control",
+        "type": "yesoreyeram-infinity-datasource"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "uid": "control",
+            "type": "yesoreyeram-infinity-datasource"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://127.0.0.1:8000/api/incidents?project=${project:regex}&service=${service:regex}&environment=${environment:regex}&instance=${instance:regex}&start=${__from}&end=${__to}",
+          "url_options": {
+            "method": "GET",
+            "data": "",
+            "headers": [],
+            "params": []
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "",
+          "columns": [
+            {
+              "selector": "service",
+              "text": "service",
+              "type": "string"
+            },
+            {
+              "selector": "status",
+              "text": "status",
+              "type": "string"
+            },
+            {
+              "selector": "reason",
+              "text": "reason",
+              "type": "string"
+            },
+            {
+              "selector": "openedIso",
+              "text": "openedIso",
+              "type": "string"
+            },
+            {
+              "selector": "durationSeconds",
+              "text": "durationSeconds",
+              "type": "number"
+            },
+            {
+              "selector": "project",
+              "text": "project",
+              "type": "string"
+            },
+            {
+              "selector": "environment",
+              "text": "environment",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "\u2014",
+          "decimals": 2,
+          "custom": {
+            "align": "left",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Service"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.width",
+                "value": 140
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Service detail",
+                    "url": "/d/service?var-project=${__data.fields.Project}&var-service=${__value.raw}&var-environment=${__data.fields.Environment}&from=${__from}&to=${__to}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Status"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "UP": {
+                        "text": "UP",
+                        "color": "green",
+                        "index": 0
+                      },
+                      "DOWN": {
+                        "text": "DOWN",
+                        "color": "red",
+                        "index": 1
+                      },
+                      "DEGRADED": {
+                        "text": "DEGRADED",
+                        "color": "orange",
+                        "index": 2
+                      },
+                      "UNKNOWN": {
+                        "text": "UNKNOWN",
+                        "color": "gray",
+                        "index": 3
+                      },
+                      "MAINTENANCE": {
+                        "text": "MAINTENANCE",
+                        "color": "blue",
+                        "index": 4
+                      },
+                      "DRAINING": {
+                        "text": "DRAINING",
+                        "color": "purple",
+                        "index": 5
+                      },
+                      "RETIRED": {
+                        "text": "RETIRED",
+                        "color": "gray",
+                        "index": 6
+                      },
+                      "OPEN": {
+                        "text": "OPEN",
+                        "color": "red",
+                        "index": 7
+                      },
+                      "RESOLVED": {
+                        "text": "RESOLVED",
+                        "color": "green",
+                        "index": 8
+                      },
+                      "MET": {
+                        "text": "MET",
+                        "color": "green",
+                        "index": 9
+                      },
+                      "MISSED": {
+                        "text": "MISSED",
+                        "color": "red",
+                        "index": 10
+                      },
+                      "INSUFFICIENT_DATA": {
+                        "text": "INSUFFICIENT_DATA",
+                        "color": "gray",
+                        "index": 11
+                      },
+                      "SUPPORTED": {
+                        "text": "SUPPORTED",
+                        "color": "green",
+                        "index": 12
+                      },
+                      "UNSUPPORTED": {
+                        "text": "UNSUPPORTED",
+                        "color": "gray",
+                        "index": 13
+                      },
+                      "DISABLED": {
+                        "text": "DISABLED",
+                        "color": "gray",
+                        "index": 14
+                      }
+                    }
+                  },
+                  {
+                    "type": "special",
+                    "options": {
+                      "match": "null",
+                      "result": {
+                        "text": "No data",
+                        "color": "gray"
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 105
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Reason"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.width",
+                "value": 180
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Detected"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.width",
+                "value": 185
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Duration"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "s"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.width",
+                "value": 95
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Project"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Environment"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "sortBy": [
+          {
+            "displayName": "Service",
+            "desc": false
+          }
+        ],
+        "footer": {
+          "show": false
+        }
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "indexByName": {
+              "service": 0,
+              "status": 1,
+              "reason": 2,
+              "openedIso": 3,
+              "durationSeconds": 4,
+              "project": 5,
+              "environment": 6
+            },
+            "renameByName": {
+              "service": "Service",
+              "status": "Status",
+              "reason": "Reason",
+              "openedIso": "Detected",
+              "durationSeconds": "Duration",
+              "project": "Project",
+              "environment": "Environment"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Recovery & outage timing bounds",
+      "type": "table",
+      "description": "Filtered by project, service, environment and instance. Missing observations show No data.",
+      "gridPos": {
+        "x": 0,
+        "y": 44,
+        "w": 24,
+        "h": 7
+      },
+      "datasource": {
+        "uid": "control",
+        "type": "yesoreyeram-infinity-datasource"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "uid": "control",
+            "type": "yesoreyeram-infinity-datasource"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://127.0.0.1:8000/api/incidents?project=${project:regex}&service=${service:regex}&environment=${environment:regex}&instance=${instance:regex}&start=${__from}&end=${__to}",
+          "url_options": {
+            "method": "GET",
+            "data": "",
+            "headers": [],
+            "params": []
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "",
+          "columns": [
+            {
+              "selector": "service",
+              "text": "service",
+              "type": "string"
+            },
+            {
+              "selector": "recoveredIso",
+              "text": "recoveredIso",
+              "type": "string"
+            },
+            {
+              "selector": "recoverySeconds",
+              "text": "recoverySeconds",
+              "type": "number"
+            },
+            {
+              "selector": "outageLowerBoundSeconds",
+              "text": "outageLowerBoundSeconds",
+              "type": "number"
+            },
+            {
+              "selector": "outageUpperBoundSeconds",
+              "text": "outageUpperBoundSeconds",
+              "type": "number"
+            },
+            {
+              "selector": "project",
+              "text": "project",
+              "type": "string"
+            },
+            {
+              "selector": "environment",
+              "text": "environment",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "\u2014",
+          "decimals": 2,
+          "custom": {
+            "align": "left",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Service"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.width",
+                "value": 140
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Service detail",
+                    "url": "/d/service?var-project=${__data.fields.Project}&var-service=${__value.raw}&var-environment=${__data.fields.Environment}&from=${__from}&to=${__to}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Recovered"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.width",
+                "value": 185
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Recovery"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "s"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.width",
+                "value": 95
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Outage lower bound"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "s"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.width",
+                "value": 95
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Outage upper bound"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "s"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.width",
+                "value": 95
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Project"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Environment"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "sortBy": [
+          {
+            "displayName": "Service",
+            "desc": false
+          }
+        ],
+        "footer": {
+          "show": false
+        }
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "indexByName": {
+              "service": 0,
+              "recoveredIso": 1,
+              "recoverySeconds": 2,
+              "outageLowerBoundSeconds": 3,
+              "outageUpperBoundSeconds": 4,
+              "project": 5,
+              "environment": 6
+            },
+            "renameByName": {
+              "service": "Service",
+              "recoveredIso": "Recovered",
+              "recoverySeconds": "Recovery",
+              "outageLowerBoundSeconds": "Outage lower bound",
+              "outageUpperBoundSeconds": "Outage upper bound",
+              "project": "Project",
+              "environment": "Environment"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "title": "Scheduled maintenance",
+      "type": "table",
+      "description": "Filtered by project, service, environment and instance. Missing observations show No data.",
+      "gridPos": {
+        "x": 0,
+        "y": 51,
+        "w": 24,
+        "h": 5
+      },
+      "datasource": {
+        "uid": "control",
+        "type": "yesoreyeram-infinity-datasource"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "uid": "control",
+            "type": "yesoreyeram-infinity-datasource"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://127.0.0.1:8000/api/maintenance?project=${project:regex}&service=${service:regex}&environment=${environment:regex}&instance=${instance:regex}&start=${__from}&end=${__to}",
+          "url_options": {
+            "method": "GET",
+            "data": "",
+            "headers": [],
+            "params": []
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "",
+          "columns": [
+            {
+              "selector": "service",
+              "text": "service",
+              "type": "string"
+            },
+            {
+              "selector": "start",
+              "text": "start",
+              "type": "string"
+            },
+            {
+              "selector": "end",
+              "text": "end",
+              "type": "string"
+            },
+            {
+              "selector": "excludeFromSlo",
+              "text": "excludeFromSlo",
+              "type": "string"
+            },
+            {
+              "selector": "project",
+              "text": "project",
+              "type": "string"
+            },
+            {
+              "selector": "environment",
+              "text": "environment",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "\u2014",
+          "decimals": 2,
+          "custom": {
+            "align": "left",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Service"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.width",
+                "value": 140
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Service detail",
+                    "url": "/d/service?var-project=${__data.fields.Project}&var-service=${__value.raw}&var-environment=${__data.fields.Environment}&from=${__from}&to=${__to}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "start"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "end"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "excludeFromSlo"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Project"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Environment"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "sortBy": [
+          {
+            "displayName": "Service",
+            "desc": false
+          }
+        ],
+        "footer": {
+          "show": false
+        }
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "indexByName": {
+              "service": 0,
+              "start": 1,
+              "end": 2,
+              "excludeFromSlo": 3,
+              "project": 4,
+              "environment": 5
+            },
+            "renameByName": {
+              "service": "Service",
+              "start": "start",
+              "end": "end",
+              "excludeFromSlo": "excludeFromSlo",
+              "project": "Project",
+              "environment": "Environment"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "title": "Notification delivery",
+      "type": "table",
+      "description": "Filtered by project, service, environment and instance. Missing observations show No data.",
+      "gridPos": {
+        "x": 0,
+        "y": 56,
+        "w": 24,
+        "h": 5
+      },
+      "datasource": {
+        "uid": "control",
+        "type": "yesoreyeram-infinity-datasource"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "uid": "control",
+            "type": "yesoreyeram-infinity-datasource"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://127.0.0.1:8000/api/notifications?project=${project:regex}&service=${service:regex}&environment=${environment:regex}&instance=${instance:regex}&start=${__from}&end=${__to}",
+          "url_options": {
+            "method": "GET",
+            "data": "",
+            "headers": [],
+            "params": []
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "",
+          "columns": [
+            {
+              "selector": "status",
+              "text": "status",
+              "type": "string"
+            },
+            {
+              "selector": "received",
+              "text": "received",
+              "type": "number"
+            },
+            {
+              "selector": "id",
+              "text": "id",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "\u2014",
+          "decimals": 2,
+          "custom": {
+            "align": "left",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Status"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "UP": {
+                        "text": "UP",
+                        "color": "green",
+                        "index": 0
+                      },
+                      "DOWN": {
+                        "text": "DOWN",
+                        "color": "red",
+                        "index": 1
+                      },
+                      "DEGRADED": {
+                        "text": "DEGRADED",
+                        "color": "orange",
+                        "index": 2
+                      },
+                      "UNKNOWN": {
+                        "text": "UNKNOWN",
+                        "color": "gray",
+                        "index": 3
+                      },
+                      "MAINTENANCE": {
+                        "text": "MAINTENANCE",
+                        "color": "blue",
+                        "index": 4
+                      },
+                      "DRAINING": {
+                        "text": "DRAINING",
+                        "color": "purple",
+                        "index": 5
+                      },
+                      "RETIRED": {
+                        "text": "RETIRED",
+                        "color": "gray",
+                        "index": 6
+                      },
+                      "OPEN": {
+                        "text": "OPEN",
+                        "color": "red",
+                        "index": 7
+                      },
+                      "RESOLVED": {
+                        "text": "RESOLVED",
+                        "color": "green",
+                        "index": 8
+                      },
+                      "MET": {
+                        "text": "MET",
+                        "color": "green",
+                        "index": 9
+                      },
+                      "MISSED": {
+                        "text": "MISSED",
+                        "color": "red",
+                        "index": 10
+                      },
+                      "INSUFFICIENT_DATA": {
+                        "text": "INSUFFICIENT_DATA",
+                        "color": "gray",
+                        "index": 11
+                      },
+                      "SUPPORTED": {
+                        "text": "SUPPORTED",
+                        "color": "green",
+                        "index": 12
+                      },
+                      "UNSUPPORTED": {
+                        "text": "UNSUPPORTED",
+                        "color": "gray",
+                        "index": 13
+                      },
+                      "DISABLED": {
+                        "text": "DISABLED",
+                        "color": "gray",
+                        "index": 14
+                      }
+                    }
+                  },
+                  {
+                    "type": "special",
+                    "options": {
+                      "match": "null",
+                      "result": {
+                        "text": "No data",
+                        "color": "gray"
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 105
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "received"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "id"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "sortBy": [
+          {
+            "displayName": "Service",
+            "desc": false
+          }
+        ],
+        "footer": {
+          "show": false
+        }
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "indexByName": {
+              "status": 0,
+              "received": 1,
+              "id": 2
+            },
+            "renameByName": {
+              "status": "Status",
+              "received": "received",
+              "id": "id"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

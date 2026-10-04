@@ -1,0 +1,14 @@
+
+> @portable-observability/sdk@1.0.0 test
+> node --test test/*.test.mjs
+
+✔ recursive redaction bounds and sanitizes (1.298208ms)
+✔ CJS and ESM have side-effect-free usable entry points (501.867792ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 946.764042

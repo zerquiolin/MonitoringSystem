@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "freshVolumeNoNetworkStartup": "PASS",
+  "blackboxSTOPRecoverySeconds": 85.73,
+  "blackboxKILLRecoverySeconds": 28.62,
+  "gracefulStopSeconds": 6.1,
+  "forcedContainerStopAndRecovery": "PASS"
+}

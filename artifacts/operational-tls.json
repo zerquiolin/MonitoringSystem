@@ -1,0 +1,7 @@
+{
+  "httpsGatewayAndAuthenticatedCustomCaJsonProbe": "PASS",
+  "untrustedCertificateRejected": "PASS",
+  "durableImmediateRevocation": "PASS",
+  "automaticExpiry": "PASS",
+  "readRoleCannotWrite": "PASS"
+}

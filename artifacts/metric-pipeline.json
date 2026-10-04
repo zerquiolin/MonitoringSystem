@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "deltaSumConvertedToCumulative": 6,
+  "deltaHistogramCount": 3,
+  "deltaHistogramBucket": 3,
+  "outboundOnlyApplication": "container publishes no ports and has no listening application server"
+}

@@ -1,0 +1,25 @@
+
+> portable-observability@1.0.0 pack
+> npm pack -w @portable-observability/sdk --pack-destination artifacts
+
+npm notice
+npm notice 📦  @portable-observability/sdk@1.0.0
+npm notice Tarball Contents
+npm notice 1.1kB LICENSE
+npm notice 1.3kB README.md
+npm notice 33.6kB dist/index.cjs
+npm notice 12.2kB dist/index.d.cts
+npm notice 12.2kB dist/index.d.ts
+npm notice 30.9kB dist/index.js
+npm notice 1.2kB package.json
+npm notice Tarball Details
+npm notice name: @portable-observability/sdk
+npm notice version: 1.0.0
+npm notice filename: portable-observability-sdk-1.0.0.tgz
+npm notice package size: 23.6 kB
+npm notice unpacked size: 92.6 kB
+npm notice shasum: b6f5dc4c60ea485937410cd5620801136e97e917
+npm notice integrity: sha512-HGkxI5s/aka5o[...]HO2aN/MriPH8w==
+npm notice total files: 7
+npm notice
+portable-observability-sdk-1.0.0.tgz

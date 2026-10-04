@@ -1,0 +1,79 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "checkId",
+    "project",
+    "service",
+    "environment",
+    "instance",
+    "kind",
+    "source",
+    "observed",
+    "received",
+    "success",
+    "reason"
+  ],
+  "properties": {
+    "checkId": {
+      "type": "string",
+      "maxLength": 160
+    },
+    "project": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "service": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "environment": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "instance": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "kind": {
+      "enum": [
+        "health",
+        "ready",
+        "worker",
+        "job",
+        "tcp",
+        "dns"
+      ]
+    },
+    "source": {
+      "enum": [
+        "blackbox",
+        "json-assertion",
+        "heartbeat",
+        "scheduler",
+        "blackbox-tcp",
+        "blackbox-dns"
+      ]
+    },
+    "observed": {
+      "type": "number"
+    },
+    "received": {
+      "type": "number"
+    },
+    "success": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "reason": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "freshnessSeconds": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    }
+  }
+}

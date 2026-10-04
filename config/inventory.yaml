@@ -1,0 +1,175 @@
+profile: local
+publicUrl: http://localhost:8080
+projects:
+- id: commerce
+  criticalServices:
+  - orders-api
+  - billing-worker
+services:
+- project: commerce
+  service: orders-api
+  environment: demo
+  kind: http
+  owner: demo-team
+  criticality: critical
+  instances:
+  - id: orders-api-1
+    healthUrl: http://host.docker.internal:4101/health
+    readyUrl: http://host.docker.internal:4101/ready
+    observationType: instance-endpoint
+  - id: orders-api-2
+    healthUrl: http://host.docker.internal:4103/health
+    readyUrl: http://host.docker.internal:4103/ready
+    observationType: instance-endpoint
+    required: false
+  quorum: 1
+  metrics:
+    mode: push
+    tokenRef: demo-orders
+  checks:
+    intervalSeconds: 5
+    timeoutSeconds: 2
+    bodyAssertion:
+      mode: json-field
+      field: status
+      equals: ok
+  heartbeat:
+    intervalSeconds: 3
+    graceSeconds: 12
+    startupGraceSeconds: 20
+  objectives:
+    probeAvailability:
+      target: 0.99
+      windowDays: 30
+    requestSuccess:
+      target: 0.995
+      minimumRequests: 100
+    requestLatency:
+      target: 0.99
+      thresholdSeconds: 0.5
+  dependencies:
+  - catalog-api
+- project: commerce
+  service: catalog-api
+  environment: demo
+  kind: http
+  owner: demo-team
+  criticality: critical
+  instances:
+  - id: catalog-api-1
+    healthUrl: http://host.docker.internal:4102/health
+    readyUrl: http://host.docker.internal:4102/ready
+    observationType: instance-endpoint
+  quorum: 1
+  metrics:
+    mode: push
+    tokenRef: demo-catalog
+  checks:
+    intervalSeconds: 5
+    timeoutSeconds: 2
+    bodyAssertion:
+      mode: json-field
+      field: status
+      equals: ok
+  heartbeat:
+    intervalSeconds: 3
+    graceSeconds: 12
+    startupGraceSeconds: 20
+  objectives:
+    probeAvailability:
+      target: 0.99
+      windowDays: 30
+    requestSuccess:
+      target: 0.995
+      minimumRequests: 100
+    requestLatency:
+      target: 0.99
+      thresholdSeconds: 0.5
+- project: commerce
+  service: billing-worker
+  environment: demo
+  kind: worker
+  owner: demo-team
+  criticality: critical
+  instances:
+  - id: billing-worker-1
+  quorum: 1
+  metrics:
+    mode: push
+    tokenRef: demo-worker
+  checks:
+    intervalSeconds: 5
+    timeoutSeconds: 2
+  heartbeat:
+    intervalSeconds: 3
+    graceSeconds: 12
+    startupGraceSeconds: 20
+  objectives:
+    probeAvailability:
+      target: 0.99
+      windowDays: 30
+    requestSuccess:
+      target: 0.995
+      minimumRequests: 100
+    requestLatency:
+      target: 0.99
+      thresholdSeconds: 0.5
+  jobs:
+    maximumRunningSeconds: 15
+- project: commerce
+  service: nightly-job
+  environment: demo
+  kind: scheduled-job
+  owner: demo-team
+  criticality: critical
+  instances:
+  - id: nightly-job-1
+  quorum: 1
+  metrics:
+    mode: push
+    tokenRef: demo-scheduler
+  checks:
+    intervalSeconds: 5
+    timeoutSeconds: 2
+  heartbeat:
+    intervalSeconds: 3
+    graceSeconds: 12
+    startupGraceSeconds: 20
+  objectives:
+    probeAvailability:
+      target: 0.99
+      windowDays: 30
+    requestSuccess:
+      target: 0.995
+      minimumRequests: 100
+    requestLatency:
+      target: 0.99
+      thresholdSeconds: 0.5
+  jobs:
+    schedule: '* * * * *'
+    timezone: America/Bogota
+    completionDeadlineSeconds: 30
+    allowedOverlap: 1
+network:
+  allowedHosts:
+  - host.docker.internal
+  allowedCidrs:
+  - 10.0.0.0/8
+  - 172.16.0.0/12
+  - 192.168.0.0/16
+  - fdc4:f303:9324::254/128
+retention:
+  metricsDays: 7
+  metricsSize: 1GB
+  logsDays: 7
+  tracesHours: 48
+  controlDays: 90
+policies:
+  failureCount: 2
+  recoveryCount: 2
+  startupGraceSeconds: 20
+  freshnessSeconds: 30
+  alertPendingSeconds: 10
+notifications:
+- name: local
+  type: local

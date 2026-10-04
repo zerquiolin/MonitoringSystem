@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "assertions": [
+    "two independent instance counters stored",
+    "compatible summed histogram query returns data",
+    "one stopped replica produces DEGRADED with quorum preserved",
+    "second replica recovery returns UP"
+  ]
+}

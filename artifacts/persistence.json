@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "method": "stopped-stack backup, restored into new isolated empty Docker volume",
+  "verified": [
+    "incident IDs",
+    "ongoing incident remains open",
+    "metrics TSDB",
+    "Loki logs",
+    "Tempo trace",
+    "eight dashboards",
+    "inventory",
+    "all backend readiness",
+    "private credential state"
+  ],
+  "backupBytes": 278577570,
+  "volume": "portable-restore-test-1791132087"
+}

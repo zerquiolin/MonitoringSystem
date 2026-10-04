@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "fault": "critical Blackbox process stopped",
+  "restartCountIncrement": 1,
+  "recoverySeconds": 28.583434041996952,
+  "assertions": [
+    "intentional failed container exit",
+    "Docker policy recovery",
+    "all-backend readiness recovered"
+  ]
+}

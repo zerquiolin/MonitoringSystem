@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "filesystem": "isolated 16 MiB tmpfs",
+  "minimumFreeBytes": 33554432,
+  "ingressRejected": 503,
+  "productionDiskFilled": false
+}

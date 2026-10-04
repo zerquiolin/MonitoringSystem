@@ -1,0 +1,56 @@
+{
+  "executedAt": "2026-10-04T17:26:53Z",
+  "platform": "arm64",
+  "checks": [
+    {
+      "check": "DEP-01/04 all required components ready",
+      "status": "PASS",
+      "detail": true
+    },
+    {
+      "check": "DEP-01 process topology",
+      "status": "PASS",
+      "detail": "9 supervised processes inside one central container"
+    },
+    {
+      "check": "MET-01 real pushed request counts",
+      "status": "PASS",
+      "detail": "Prometheus counters and explicit histogram buckets stored"
+    },
+    {
+      "check": "HLT-01 external probes",
+      "status": "PASS",
+      "detail": "All four external HTTP health/readiness checks successful"
+    },
+    {
+      "check": "STA-01 expected inventory visible",
+      "status": "PASS",
+      "detail": true
+    },
+    {
+      "check": "SEC-02 resource and role authorization",
+      "status": "PASS",
+      "detail": "Missing credential, cross-service spoof, and read-role write rejected"
+    },
+    {
+      "check": "LOG-01/TRC-01 stored correlated signals",
+      "status": "PASS",
+      "detail": "Real Loki log redacted and correlated with a stored cross-service Tempo trace"
+    },
+    {
+      "check": "UI-01 provisioned Grafana resources",
+      "status": "PASS",
+      "detail": "8 dashboards, 4 data sources, and Grafana alert rules provisioned"
+    },
+    {
+      "check": "HLT-02/INC-01 fault and recovery",
+      "status": "PASS",
+      "detail": "Dependency failure preserves liveness, opens one incident, and confirms recovery"
+    },
+    {
+      "check": "ALT-01 local Grafana notification delivery",
+      "status": "PASS",
+      "detail": "Grafana native webhook delivered to local audit receiver; external destinations unverified"
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+overview: Services
+overview: Healthy
+overview: Needs attention
+overview: Open incidents
+overview: Availability · selected time range
+overview: Request rate
+overview: Request p95
+project: Critical service health
+project: Service availability
+project: Request rate
+project: Request p95
+project: Objectives
+project: Ownership & dependencies
+service: Health & readiness
+service: Observed uptime & downtime · selected range
+service: Replica observations
+service: Request rate
+service: Request p95
+service: Request failures · 5xx
+service: Active requests
+service: Process uptime
+service: Process RSS
+service: Process CPU · cores used
+service: V8 heap used
+service: Event-loop delay · mean
+service: Event-loop utilization
+service: GC duration p95
+service: Jobs in flight
+service: Completed jobs / second
+service: Failed jobs / second
+service: Aborted requests / second
+service: Readiness probe duration
+infrastructure: OS-visible RAM available · host publisher
+infrastructure: OS-visible RAM utilization
+infrastructure: Container memory used
+infrastructure: Container memory limit
+infrastructure: Filesystem free · configured path 0
+infrastructure: Filesystem utilization · configured path 0
+infrastructure: OS-visible CPU utilization
+infrastructure: CPU capacity · OS-visible
+infrastructure: Collector capability · 1 means named state
+logs: Application logs · newest first
+logs: Application exceptions
+logs: Dropped log events
+logs: Log export failures
+traces: Stored trace search
+traces: Observed calls / second
+traces: Observed failed calls / second
+traces: Declared dependencies
+incidents: Uptime, downtime & observation coverage
+incidents: Incidents & recovery
+incidents: SLOs & error budgets · configured windows
+incidents: Remaining error budgets
+incidents: Service state history
+incidents: Availability budget burn · 1h and 6h
+incidents: Incident history
+incidents: Recovery & outage timing bounds
+incidents: Scheduled maintenance
+incidents: Notification delivery
+monitoring: Pipeline ready
+monitoring: Evaluator age
+monitoring: Storage free
+monitoring: Ingress rejections
+monitoring: Backend health
+monitoring: Telemetry freshness
+monitoring: Upstream partially rejected telemetry
+monitoring: Native notification failures
+monitoring: Alloy exporter queue
+monitoring: SDK export failures
+monitoring: SDK dropped data
+monitoring: SDK queued log events
+monitoring: Monitoring volume free
+PASS all 72 dashboard panels queried through Grafana data sources

@@ -1,0 +1,27 @@
+{
+  "name": "portable-observability",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "package",
+    "dummy-servers"
+  ],
+  "scripts": {
+    "build": "npm run build -w @portable-observability/sdk",
+    "test": "npm run test -w @portable-observability/sdk && .venv/bin/python -m unittest discover -s tests -p \"test_*.py\"",
+    "demo": "node dummy-servers/launcher.mjs",
+    "test:integration": "node tests/integration.mjs",
+    "test:acceptance": "python3 tests/acceptance.py",
+    "pack": "npm pack -w @portable-observability/sdk --pack-destination artifacts",
+    "test:security": "python3 tests/security.py",
+    "test:persistence": "python3 tests/persistence.py",
+    "test:platform": "python3 tests/runtime_architecture.py",
+    "test:package": "node scripts/package-test.mjs",
+    "benchmark": "node scripts/benchmark.mjs"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "@types/node": "^22.0.0",
+    "@types/express": "^5.0.0"
+  }
+}

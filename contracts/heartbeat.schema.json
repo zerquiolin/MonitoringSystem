@@ -1,0 +1,66 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "resource": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "project": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,63}$"
+        },
+        "service": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,63}$"
+        },
+        "environment": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,63}$"
+        },
+        "instance": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,63}$"
+        }
+      },
+      "required": [
+        "project",
+        "service",
+        "environment",
+        "instance"
+      ]
+    },
+    "bootId": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "sequence": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "ready": {
+      "type": "boolean"
+    },
+    "progress": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "activeJobs": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "timestamp": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    }
+  },
+  "required": [
+    "resource",
+    "bootId",
+    "sequence",
+    "ready",
+    "progress",
+    "activeJobs",
+    "timestamp"
+  ]
+}

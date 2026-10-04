@@ -1,0 +1,254 @@
+[
+  {
+    "id": "DEP-01",
+    "criterion": "Exactly one central container runs all required components; no hidden central container/cloud dependency",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "acceptance.json: exactly nine components in one central container"
+  },
+  {
+    "id": "DEP-02",
+    "criterion": "Prebuilt image starts on a clean supported Docker host without runtime plugin/package downloads",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "offline-lifecycle.json: fresh volume with --network none; no runtime package/plugin download"
+  },
+  {
+    "id": "DEP-03",
+    "criterion": "AMD64 and ARM64 image paths are built and exercised with stated test evidence",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "build-arm64.log/build-amd64.log and platform-amd64.json: native ARM64, emulated AMD64"
+  },
+  {
+    "id": "DEP-04",
+    "criterion": "Every required backend and control/gateway component participates in startup readiness and shutdown",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "acceptance.json/offline-lifecycle.json: all-component readiness and graceful shutdown"
+  },
+  {
+    "id": "DEP-05",
+    "criterion": "Critical crash/hang produces bounded cleanup and recoverable failed container exit",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "offline-lifecycle.json/oom.json/watchdog.json: hang, kill, actual OOM and bounded recovery"
+  },
+  {
+    "id": "DEP-06",
+    "criterion": "Recreation preserves metrics, logs, traces, Grafana state, inventory, and ongoing incidents",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "persistence.json/reliability.json: restored metrics/logs/trace/dashboards/inventory/credentials/active incident and duration history"
+  },
+  {
+    "id": "CFG-01",
+    "criterion": "Invalid inventory/secrets/configuration cannot partially replace working active state",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "reconciliation.json: assembled-image preflight; invalid candidate preserves active inventory; rollback"
+  },
+  {
+    "id": "CFG-02",
+    "criterion": "Inventory reorder preserves stable identities; add/edit/remove cleans only owned resources",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "reconciliation.json/unit-tests.log: stable reordering; removed owned alerts; source ownership and explicit contact cleanup"
+  },
+  {
+    "id": "SEC-01",
+    "criterion": "Operational interfaces are authenticated/TLS-protected; raw backend endpoints are not publicly exposed",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "operational-tls.json/acceptance.json: verified HTTPS; only loopback backend listeners; query/read role boundaries"
+  },
+  {
+    "id": "SEC-02",
+    "criterion": "Ingestion identity spoofing, unauthorized probe destinations, oversized payloads, and revoked tokens are rejected",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "security.json/operational-tls.json/unit-tests.log: spoofing/body limits/target allowlists and immediate revocation/expiry"
+  },
+  {
+    "id": "SEC-03",
+    "criterion": "Sensitive fixture values do not appear anywhere in exported metrics/logs/traces/diagnostics/notifications",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "extended-security.json/acceptance.json/unit-tests.log/delivery-manifest.json: redacted binary trace/log fixtures, reports/notifications and archive scan"
+  },
+  {
+    "id": "SDK-01",
+    "criterion": "Real npm tarball installs and works with CJS, ESM, and TypeScript consumers",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "package-tests.log: independently installed tarball CJS/ESM/TypeScript"
+  },
+  {
+    "id": "SDK-02",
+    "criterion": "Actual Express/Fastify/native HTTP integrations observe requests exactly once and exclude monitoring endpoints",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "framework-tests.log: actual adapters, nested templates, repeated initialization and exclusion"
+  },
+  {
+    "id": "SDK-03",
+    "criterion": "SDK exporter outage remains bounded and does not stop application request handling",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "exporter-outage.log: maintained exporters fail/recover; bounded queue/drop diagnostics and continued requests"
+  },
+  {
+    "id": "SDK-04",
+    "criterion": "Early bootstrap creates correlated real inbound/outbound/dependency spans",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "acceptance.json: correlated cross-service HTTP and manual SQLite dependency spans"
+  },
+  {
+    "id": "MET-01",
+    "criterion": "Push and pull produce compatible names/units/identity without duplicate series/counters",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "metric-contract.json/metric-pipeline.json: real push/pull names/buckets/identity, delta conversion and cumulative reset"
+  },
+  {
+    "id": "MET-02",
+    "criterion": "Two replicas aggregate counts/histograms correctly; no averaging replica percentiles",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "replicas.json: compatible counters/histograms; query sums buckets before percentile"
+  },
+  {
+    "id": "MET-03",
+    "criterion": "Aborted, in-flight, completed, and failed requests have correct lifecycle semantics",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "framework-tests.log: stream/abort/in-flight/finish-close races and error status"
+  },
+  {
+    "id": "MET-04",
+    "criterion": "CPU/RAM/disk scope and unsupported states are truthful; host duplicates are not summed",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "framework-tests.log/acceptance.json/dashboard-queries.json: scoped collectors/capability states; designated host and max by hostId"
+  },
+  {
+    "id": "HLT-01",
+    "criterion": "External check detects service failure independently of the application's own reporting",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "acceptance.json: actual external checks and independent failure detection"
+  },
+  {
+    "id": "HLT-02",
+    "criterion": "Dependency failure changes readiness without falsely claiming process death",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "acceptance.json: dependency failure preserves HTTP liveness and changes readiness"
+  },
+  {
+    "id": "HLT-03",
+    "criterion": "Check assertions, authentication, TLS/expiry, timeouts, and safe networking work through actual probes",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "operational-tls.json/network-probes.json: authenticated custom-CA JSON assertions, expiry and actual TCP/DNS"
+  },
+  {
+    "id": "LOG-01",
+    "criterion": "A real application log reaches Loki, is queryable, redacted, and links to its active trace",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "acceptance.json/extended-security.json: stored redacted correlated Loki events"
+  },
+  {
+    "id": "LOG-02",
+    "criterion": "Overflow, retry, rejection, duplication, and recovery follow documented delivery semantics",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "exporter-outage.log/framework-tests.log/extended-security.json: bounded overflow/recovery, idempotency and acceptance policy"
+  },
+  {
+    "id": "TRC-01",
+    "criterion": "A request across two services appears as one correctly connected trace with a dependency span",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "acceptance.json: stored connected two-service trace and dependency span"
+  },
+  {
+    "id": "TRC-02",
+    "criterion": "Sampling and service-graph generation work and do not duplicate canonical RED metrics",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "acceptance.json/metric-pipeline.json: maintained head sampling, separate Tempo service graph/RED metric names; no tail retention promise"
+  },
+  {
+    "id": "WRK-01",
+    "criterion": "Expected worker heartbeat expiry opens a correctly reasoned incident; idle healthy workers are not falsely stalled",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "workers.json: heartbeat expiry, idle/stall distinction and recovery"
+  },
+  {
+    "id": "WRK-02",
+    "criterion": "Job progress/failure/duration and scheduled missed/overdue executions are represented correctly",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "workers.json/unit-tests.log: deadlines, source clocks, replay/boot ownership, overlap, interrupted runs and timezone/DST"
+  },
+  {
+    "id": "STA-01",
+    "criterion": "Missing expected services remain visible; stale success never remains permanently UP",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "acceptance.json/reliability.json: expected inventory, stale observations and unknown gaps"
+  },
+  {
+    "id": "STA-02",
+    "criterion": "Monitoring-pipeline failure yields separate pipeline alerts and UNKNOWN service observations",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "offline-lifecycle.json/reliability.json: monitoring fault degrades readiness; missing observation is unknown"
+  },
+  {
+    "id": "INC-01",
+    "criterion": "Incident open/recovery, debounce, timing bounds, deduplication, and restart recovery are verified",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "reliability.json/alert-lifecycle.json/unit-tests.log: debounce, deduplication, timing/acknowledgment and restart durability"
+  },
+  {
+    "id": "INC-02",
+    "criterion": "Delivery failure/silence does not erase incident evidence or create false resolution",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "native-notifications.json: silenced firing does not erase incident or count as recovery"
+  },
+  {
+    "id": "SLO-01",
+    "criterion": "Known/failed/unknown/maintenance coverage, request objectives, and error-budget calculations match deterministic fixtures",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "unit-tests.log/reliability.json/native-notifications.json: known duration, overlap exclusion, request guards/windows and budgets"
+  },
+  {
+    "id": "SLO-02",
+    "criterion": "Zero traffic and insufficient coverage are not reported as proven 100% compliance",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "unit-tests.log/dashboard-queries.json: missing coverage/traffic produces insufficient data"
+  },
+  {
+    "id": "UI-01",
+    "criterion": "All required dashboards/data sources are provisioned and useful with real example data",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "dashboard-queries.json and Grafana screenshots: eight actual provisioned dashboards with real example data"
+  },
+  {
+    "id": "UI-02",
+    "criterion": "Metric/log/trace/incident/runbook links preserve identity/time context and enforce read scope",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "dashboard-queries.json/Grafana screenshots: identity/time links, correlation data-source links and authenticated control reads"
+  },
+  {
+    "id": "ALT-01",
+    "criterion": "Firing and recovery notifications reach the selected configured destination using the correct native payload",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "native-notifications.json/alert-lifecycle.json: local native email/Slack/Teams/webhook firing/resolved; actual external accounts need deployment verification"
+  },
+  {
+    "id": "ALT-02",
+    "criterion": "Multiple destinations/routing/grouping/silence policies work without silently ignoring configuration",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "native-notifications.json: multiple matching destinations, grouping and actual maintenance silence"
+  },
+  {
+    "id": "OPS-01",
+    "criterion": "Retention actually deletes data in accelerated tests and storage pressure is visible",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "retention.json/control-retention.json/storage-guard.json: physical backend deletion, event pruning and bounded low-space admission"
+  },
+  {
+    "id": "OPS-02",
+    "criterion": "Backup restores into an isolated empty volume with readable signals and correct active-incident/credential state",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "persistence.json: complete isolated stopped-stack restore including active incident/trace/credentials"
+  },
+  {
+    "id": "OPS-03",
+    "criterion": "SDK/full-stack overhead and sustainable load limits are measured and reported honestly",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "capacity.json/benchmark.json: measured ten-minute full-stack envelope plus isolated SDK overhead; no universal capacity claim"
+  },
+  {
+    "id": "DOC-01",
+    "criterion": "README onboarding and example commands run as written; unresolved external deployment checks are identified",
+    "status": "Verified in documented local fixture scope",
+    "evidence": "README.md/docs/acceptance.md: executable tooling/demo/package commands and explicit external deployment prerequisites"
+  }
+]

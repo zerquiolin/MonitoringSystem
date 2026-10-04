@@ -1,0 +1,75 @@
+otelcol.receiver.otlp "applications" {
+  http { endpoint = "127.0.0.1:4318" }
+  output {
+    metrics = [otelcol.processor.memory_limiter.bounded.input]
+    traces = [otelcol.processor.memory_limiter.bounded.input]
+  }
+}
+otelcol.processor.memory_limiter "bounded" {
+  check_interval = "1s"
+  limit = "256MiB"
+  spike_limit = "64MiB"
+  output {
+    metrics = [otelcol.processor.deltatocumulative.metrics.input]
+    traces = [otelcol.processor.batch.signals.input]
+  }
+}
+otelcol.processor.deltatocumulative "metrics" {
+  max_stale = "5m"
+  max_streams = 10000
+  output { metrics = [otelcol.processor.batch.signals.input] }
+}
+otelcol.processor.batch "signals" {
+  timeout = "1s"
+  send_batch_size = 512
+  send_batch_max_size = 1024
+  output {
+    metrics = [otelcol.exporter.prometheus.apps.input]
+    traces = [otelcol.exporter.otlp.tempo.input]
+  }
+}
+otelcol.exporter.prometheus "apps" {
+  forward_to = [prometheus.remote_write.local.receiver]
+  add_metric_suffixes = false
+  include_target_info = false
+  include_scope_labels = false
+}
+prometheus.remote_write "local" {
+  endpoint {
+    url = "http://127.0.0.1:9090/api/v1/write"
+    queue_config {
+      capacity = 10000
+      max_shards = 2
+      max_samples_per_send = 1000
+    }
+  }
+  wal { max_keepalive_time = "1h" }
+}
+otelcol.exporter.otlp "tempo" {
+  client {
+    endpoint = "127.0.0.1:4317"
+    tls { insecure = true }
+  }
+  sending_queue {
+    enabled = true
+    queue_size = 1000
+    num_consumers = 2
+  }
+  retry_on_failure {
+    enabled = true
+    initial_interval = "1s"
+    max_interval = "10s"
+    max_elapsed_time = "60s"
+  }
+}
+loki.source.api "applications" {
+  http {
+    listen_address = "127.0.0.1"
+    listen_port = 3500
+  }
+  forward_to = [loki.write.local.receiver]
+}
+loki.write "local" {
+  endpoint { url = "http://127.0.0.1:3100/loki/api/v1/push" }
+  wal { enabled = true }
+}

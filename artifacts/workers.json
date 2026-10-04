@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "fault": "heartbeatLoss",
+      "reason": "heartbeat_expired",
+      "recovery": "UP"
+    },
+    {
+      "fault": "stall",
+      "reason": "job_stalled",
+      "recovery": "UP"
+    },
+    {
+      "fault": "missSchedule",
+      "reason": "scheduled_deadline_missed",
+      "recovery": "UP"
+    }
+  ]
+}

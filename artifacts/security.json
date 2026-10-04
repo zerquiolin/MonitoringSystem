@@ -1,0 +1,9 @@
+{
+  "binaryAuthorized": "PASS",
+  "gzipAuthorized": "PASS",
+  "binaryIdentitySpoof": "REJECTED",
+  "malformedPayload": "REJECTED",
+  "compressionBomb": "REJECTED",
+  "oversizedBody": "REJECTED",
+  "anonymous": "REJECTED"
+}

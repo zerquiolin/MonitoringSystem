@@ -1,0 +1,39 @@
+name: Verify portable monitoring
+on: [push, pull_request]
+jobs:
+  sdk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m venv .venv && .venv/bin/pip install -r docker/control/requirements.lock.txt
+      - run: npm ci && python scripts/monitoring.py init && npm run build && npm test && npm run test:integration && npm run pack && node scripts/package-test.mjs
+  container:
+    strategy:
+      matrix: {platform: [linux/amd64, linux/arm64]}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile
+          platforms: ${{ matrix.platform }}
+          tags: portable-observability:local
+          load: true
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - run: python -m venv .venv && .venv/bin/pip install -r docker/control/requirements.lock.txt && python scripts/monitoring.py init && npm ci && npm run build
+      - run: docker compose -f docker/compose.yaml up -d --no-build
+      - run: nohup npm run demo > /tmp/demo.log 2>&1 &
+      - run: npm run test:acceptance
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: 'evidence-${{ strategy.job-index }}', path: artifacts/acceptance.json}

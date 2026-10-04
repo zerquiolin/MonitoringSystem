@@ -1,0 +1,5 @@
+{
+  "status": "PASS",
+  "expiredObservationTimelineJobRowsRemoved": true,
+  "existingIncidentSummariesPreserved": true
+}

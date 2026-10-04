@@ -1,0 +1,2 @@
+Binary/JSON gzip authorization and ingress limit assertions passed
+PASS binary stored trace, central redaction and resource-scoped duplicate suppression

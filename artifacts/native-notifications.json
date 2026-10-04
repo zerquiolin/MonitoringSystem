@@ -1,0 +1,11 @@
+{
+  "nativeFiringPayloads": [
+    "Grafana webhook",
+    "Slack attachment",
+    "Teams card",
+    "SMTP message"
+  ],
+  "allFourNativeResolvedDeliveries": "PASS",
+  "maintenanceSuppressesDeliveryPreservesIncidentAndExcludesSlo": "PASS",
+  "status": "PASS"
+}

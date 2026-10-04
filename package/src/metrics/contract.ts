@@ -1,0 +1,2 @@
+export const REQUEST_HISTOGRAM_BOUNDS = [.005,.01,.025,.05,.1,.25,.5,1,2.5,5,10];
+export const BOUNDED_HTTP_METHODS = ['GET','POST','PUT','PATCH','DELETE','OPTIONS','HEAD'];

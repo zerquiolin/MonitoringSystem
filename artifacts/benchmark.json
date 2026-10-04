@@ -1,0 +1,29 @@
+{
+  "workload": "3000 native HTTP requests, 20 concurrent clients, pull reader, traces/log export disabled; SDK process collectors enabled",
+  "results": [
+    {
+      "enabled": false,
+      "requests": 3000,
+      "requestsPerSecond": 11962.495566699145,
+      "meanMilliseconds": 1.6496189260000007,
+      "cpuSeconds": 0.41744,
+      "rssBytes": 174374912
+    },
+    {
+      "enabled": true,
+      "requests": 3000,
+      "requestsPerSecond": 11049.360857639898,
+      "meanMilliseconds": 1.7819830156666616,
+      "cpuSeconds": 0.447154,
+      "rssBytes": 203079680
+    }
+  ],
+  "throughputRatio": 0.9236668716851019,
+  "latencyRatio": 1.0802391919615142,
+  "scope": "Local microbenchmark. Not a full-stack sustainable capacity measurement.",
+  "budget": {
+    "minimumThroughputRatio": 0.7,
+    "maximumMeanLatencyRatio": 1.5
+  },
+  "passed": true
+}

@@ -1,0 +1,23 @@
+// Isolated process tests process-wide OTel providers correctly.
+import {initializeMonitoring} from '../package/dist/index.js';
+const m=await initializeMonitoring({resource:{project:'test',service:'api',environment:'test',instance:'one'},endpoint:'http://127.0.0.1:1',token:'test',metrics:{mode:'pull'},logs:{stdout:false,queueSize:8},traces:{enabled:false},readiness:{checks:{db:{check:async signal=>{await new Promise(resolve=>setTimeout(resolve,10));return !signal.aborted;}}}}});
+const same=await initializeMonitoring({resource:{project:'test',service:'api',environment:'test',instance:'one'},endpoint:'http://127.0.0.1:1',token:'test',metrics:{mode:'pull'},logs:{stdout:false,queueSize:8},traces:{enabled:false},readiness:{checks:{db:{check:async()=>true}}}});if(same!==m)throw new Error('singleton');
+const http=await import('node:http');const express=(await import('express')).default;const Fastify=(await import('fastify')).default;
+const app=express();app.use(m.middleware());app.use(m.middleware());app.get('/health',m.healthHandler);app.get('/ready',m.readyHandler);app.get('/metrics',m.metricsHandler);app.get('/items/:id',(req,res)=>res.json({ok:true}));app.get('/stream',(_req,res)=>{res.write('a');setTimeout(()=>res.end('b'),150);});
+const router=express.Router();router.use(m.middleware('/accounts/:account/items/:id'));router.get('/items/:id',(_req,res)=>res.json({ok:true}));app.use('/accounts/:account',router);
+app.get('/failure',(_req,_res,next)=>next(new Error('fixture')));app.use(m.errorMiddleware());app.use((_err,_req,res,_next)=>res.status(500).json({status:'failed'}));
+const server=await new Promise(resolve=>{const s=app.listen(0,'127.0.0.1',()=>resolve(s));});const url='http://127.0.0.1:'+server.address().port;
+await fetch(url+'/accounts/alice/items/a');await fetch(url+'/accounts/bob/items/b');await fetch(url+'/failure');
+for(let n=0;n<3;n++)await(await fetch(url+'/items/'+n)).text();await fetch(url+'/health');await fetch(url+'/ready');
+await new Promise(resolve=>{const req=http.get(url+'/stream',res=>res.on('data',()=>{req.destroy();resolve();}));});await new Promise(r=>setTimeout(r,200));
+const metrics=await(await fetch(url+'/metrics')).text();
+if(metrics.includes('alice')||metrics.includes('bob'))throw new Error('Dynamic mount value leaked');
+if(!metrics.includes('route="/accounts/:account/items/:id"'))throw new Error('Missing explicit nested template');
+if(!/app_http_requests_total\{[^\n]*route="\/items\/:id"[^\n]*\} 3/.test(metrics))throw new Error('wrong completed requests: '+metrics);
+if(!/app_http_requests_aborted_total\{[^\n]*\} 1/.test(metrics))throw new Error('abort not counted');
+if(/route="\/health"/.test(metrics))throw new Error('monitoring counted');
+const fastify=Fastify();await m.fastifyPlugin(fastify);fastify.get('/fast/:id',async()=>({ok:true}));await fastify.listen({host:'127.0.0.1',port:0});await fetch('http://127.0.0.1:'+fastify.server.address().port+'/fast/1');
+const after=await(await fetch(url+'/metrics')).text();if(!after.includes('route="/fast/:id"'))throw new Error('Fastify route not measured');
+const queuedBefore=m.diagnostics().logQueue,droppedBefore=m.diagnostics().dropped;for(let i=0;i<50;i++)m.logger.info('fixture',{password:'hidden'});if(m.diagnostics().logQueue!==8||m.diagnostics().dropped-droppedBefore!==50-(8-queuedBefore))throw new Error('Queue unbounded');
+m.setReady(false);if((await fetch(url+'/ready')).status!==503)throw new Error('drain');
+await fastify.close();await new Promise(r=>server.close(r));await m.shutdown({timeoutMs:1000});console.log('Framework lifecycle, abort, queue, and drain assertions passed');

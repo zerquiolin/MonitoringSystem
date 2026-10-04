@@ -1,0 +1,437 @@
+{
+  "status": "PASS",
+  "panels": [
+    {
+      "dashboard": "overview",
+      "panel": "Services",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "overview",
+      "panel": "Healthy",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "overview",
+      "panel": "Needs attention",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "overview",
+      "panel": "Open incidents",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "overview",
+      "panel": "Availability \u00b7 selected time range",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "overview",
+      "panel": "Request rate",
+      "status": "PASS",
+      "frames": 2
+    },
+    {
+      "dashboard": "overview",
+      "panel": "Request p95",
+      "status": "PASS",
+      "frames": 2
+    },
+    {
+      "dashboard": "project",
+      "panel": "Critical service health",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "project",
+      "panel": "Service availability",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "project",
+      "panel": "Request rate",
+      "status": "PASS",
+      "frames": 2
+    },
+    {
+      "dashboard": "project",
+      "panel": "Request p95",
+      "status": "PASS",
+      "frames": 2
+    },
+    {
+      "dashboard": "project",
+      "panel": "Objectives",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "project",
+      "panel": "Ownership & dependencies",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "service",
+      "panel": "Health & readiness",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "service",
+      "panel": "Observed uptime & downtime \u00b7 selected range",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "service",
+      "panel": "Replica observations",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "service",
+      "panel": "Request rate",
+      "status": "PASS",
+      "frames": 2
+    },
+    {
+      "dashboard": "service",
+      "panel": "Request p95",
+      "status": "PASS",
+      "frames": 2
+    },
+    {
+      "dashboard": "service",
+      "panel": "Request failures \u00b7 5xx",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "service",
+      "panel": "Active requests",
+      "status": "PASS",
+      "frames": 5
+    },
+    {
+      "dashboard": "service",
+      "panel": "Process uptime",
+      "status": "PASS",
+      "frames": 5
+    },
+    {
+      "dashboard": "service",
+      "panel": "Process RSS",
+      "status": "PASS",
+      "frames": 5
+    },
+    {
+      "dashboard": "service",
+      "panel": "Process CPU \u00b7 cores used",
+      "status": "PASS",
+      "frames": 5
+    },
+    {
+      "dashboard": "service",
+      "panel": "V8 heap used",
+      "status": "PASS",
+      "frames": 5
+    },
+    {
+      "dashboard": "service",
+      "panel": "Event-loop delay \u00b7 mean",
+      "status": "PASS",
+      "frames": 5
+    },
+    {
+      "dashboard": "service",
+      "panel": "Event-loop utilization",
+      "status": "PASS",
+      "frames": 5
+    },
+    {
+      "dashboard": "service",
+      "panel": "GC duration p95",
+      "status": "PASS",
+      "frames": 4
+    },
+    {
+      "dashboard": "service",
+      "panel": "Jobs in flight",
+      "status": "PASS",
+      "frames": 5
+    },
+    {
+      "dashboard": "service",
+      "panel": "Completed jobs / second",
+      "status": "PASS",
+      "frames": 2
+    },
+    {
+      "dashboard": "service",
+      "panel": "Failed jobs / second",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "service",
+      "panel": "Aborted requests / second",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "service",
+      "panel": "Readiness probe duration",
+      "status": "PASS",
+      "frames": 3
+    },
+    {
+      "dashboard": "infrastructure",
+      "panel": "OS-visible RAM available \u00b7 host publisher",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "infrastructure",
+      "panel": "OS-visible RAM utilization",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "infrastructure",
+      "panel": "Container memory used",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "infrastructure",
+      "panel": "Container memory limit",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "infrastructure",
+      "panel": "Filesystem free \u00b7 configured path 0",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "infrastructure",
+      "panel": "Filesystem utilization \u00b7 configured path 0",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "infrastructure",
+      "panel": "OS-visible CPU utilization",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "infrastructure",
+      "panel": "CPU capacity \u00b7 OS-visible",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "infrastructure",
+      "panel": "Collector capability \u00b7 1 means named state",
+      "status": "PASS",
+      "frames": 20
+    },
+    {
+      "dashboard": "logs",
+      "panel": "Application logs \u00b7 newest first",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "logs",
+      "panel": "Application exceptions",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "logs",
+      "panel": "Dropped log events",
+      "status": "PASS",
+      "frames": 2
+    },
+    {
+      "dashboard": "logs",
+      "panel": "Log export failures",
+      "status": "PASS",
+      "frames": 4
+    },
+    {
+      "dashboard": "traces",
+      "panel": "Stored trace search",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "traces",
+      "panel": "Observed calls / second",
+      "status": "PASS",
+      "frames": 3
+    },
+    {
+      "dashboard": "traces",
+      "panel": "Observed failed calls / second",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "traces",
+      "panel": "Declared dependencies",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "incidents",
+      "panel": "Uptime, downtime & observation coverage",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "incidents",
+      "panel": "Incidents & recovery",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "incidents",
+      "panel": "SLOs & error budgets \u00b7 configured windows",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "incidents",
+      "panel": "Remaining error budgets",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "incidents",
+      "panel": "Service state history",
+      "status": "PASS",
+      "frames": 9
+    },
+    {
+      "dashboard": "incidents",
+      "panel": "Availability budget burn \u00b7 1h and 6h",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "incidents",
+      "panel": "Incident history",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "incidents",
+      "panel": "Recovery & outage timing bounds",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "incidents",
+      "panel": "Scheduled maintenance",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "incidents",
+      "panel": "Notification delivery",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "monitoring",
+      "panel": "Pipeline ready",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "monitoring",
+      "panel": "Evaluator age",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "monitoring",
+      "panel": "Storage free",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "monitoring",
+      "panel": "Ingress rejections",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "monitoring",
+      "panel": "Backend health",
+      "status": "PASS",
+      "frames": 7
+    },
+    {
+      "dashboard": "monitoring",
+      "panel": "Telemetry freshness",
+      "status": "PASS",
+      "frames": 4
+    },
+    {
+      "dashboard": "monitoring",
+      "panel": "Upstream partially rejected telemetry",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "monitoring",
+      "panel": "Native notification failures",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "monitoring",
+      "panel": "Alloy exporter queue",
+      "status": "PASS",
+      "frames": 3
+    },
+    {
+      "dashboard": "monitoring",
+      "panel": "SDK export failures",
+      "status": "PASS",
+      "frames": 16
+    },
+    {
+      "dashboard": "monitoring",
+      "panel": "SDK dropped data",
+      "status": "PASS",
+      "frames": 1
+    },
+    {
+      "dashboard": "monitoring",
+      "panel": "SDK queued log events",
+      "status": "PASS",
+      "frames": 5
+    },
+    {
+      "dashboard": "monitoring",
+      "panel": "Monitoring volume free",
+      "status": "PASS",
+      "frames": 1
+    }
+  ]
+}

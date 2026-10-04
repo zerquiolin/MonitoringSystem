@@ -1,0 +1,6 @@
+{
+  "status": "PASS",
+  "removedOwnedRules": 2,
+  "invalidApplyPreservedActiveInventory": true,
+  "rollbackRestoredExpectedInventory": true
+}

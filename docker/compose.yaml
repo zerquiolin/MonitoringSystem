@@ -1,0 +1,24 @@
+name: portable-observability
+services:
+  monitoring:
+    image: portable-observability:local
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "127.0.0.1:8080:8080"
+      - "127.0.0.1:8443:8443"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ../config:/config:ro
+      - ../secrets:/run/secrets:ro
+      - monitoring-data:/data
+    restart: unless-stopped
+    stop_grace_period: 75s
+    mem_limit: 4g
+    cpus: 4
+    security_opt:
+      - no-new-privileges:true
+volumes:
+  monitoring-data:

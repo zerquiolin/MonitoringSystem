@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "binaryTraceStoredAndRedacted": true,
+  "traceId": "288ed32d4ff6cb321a136a35496f49f6",
+  "logDuplicateSuppression": "one event per resource+instance+eventId; different instances retained",
+  "diagnosticsSecretScan": "PASS"
+}

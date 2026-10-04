@@ -1,0 +1,11 @@
+{
+  "name": "dummy-servers",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@portable-observability/sdk": "1.0.0",
+    "express": "^5.1.0",
+    "fastify": "^5.6.0"
+  }
+}

@@ -1,0 +1,12 @@
+node_modules/
+package/dist/
+.venv/
+secrets/
+config/generated*/
+data/
+backups/
+artifacts/*.tgz
+artifacts/*.tar.gz
+__pycache__/
+*.pyc
+.env

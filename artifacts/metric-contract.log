@@ -1,0 +1,2 @@
+Binary/JSON gzip authorization and ingress limit assertions passed
+PASS real pull identity/names/buckets, cumulative counter reset and histogram rejection

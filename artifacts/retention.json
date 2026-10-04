@@ -1,0 +1,20 @@
+{
+  "prometheus": {
+    "status": "PASS",
+    "oldBlocksPhysicallyDeleted": 1,
+    "recentSampleRetained": true
+  },
+  "loki": {
+    "status": "PASS",
+    "oldQueryableBeforeRetention": true,
+    "queryCacheVisibility": "Stored chunks are physically deleted; cached reads may linger until cache refresh.",
+    "physicallyDeletedChunks": 1,
+    "recentLogRetained": true
+  },
+  "tempo": {
+    "status": "PASS",
+    "traceQueryableBeforeRetention": true,
+    "traceNotQueryableAfter": true,
+    "expiredBlocksPhysicallyDeleted": true
+  }
+}

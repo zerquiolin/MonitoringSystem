@@ -1,0 +1,1 @@
+PASS low-space admission rejects new telemetry on a bounded memory fixture
