@@ -1,61 +1,71 @@
-# Dummy servers
+# Typed demo applications
 
-Run `npm run demo` from the repository root after the SDK build and monitoring start.
-This launches independent processes: Express orders API with replicas (4101 and 4103), Fastify catalog API
-(4102), a billing worker, and a scheduled job. Traffic continues four times per second.
-Orders calls catalog over instrumented HTTP; catalog queries a real in-memory SQLite
-fixture inside a manual dependency span. Logs contain the active trace ID.
+These strict TypeScript applications show how a service integrates the SDK. They
+include an Express orders API, a Fastify catalog API backed by an in-memory SQLite
+fixture, two orders replicas, a billing worker, a scheduled job, and authenticated
+fault controls. The demo continually sends requests to make the Grafana views useful.
 
-All services bind for the monitoring container to reach them through
-`host.docker.internal`. Fault administration binds only to loopback and requires the
-operator secret. These are deliberately faultable demo applications.
+## Build and start
 
-Run these from the repository root:
+Run from the repository root after the monitoring system has been initialized:
 
 ```sh
-node implementations/dummy-servers/fault.mjs catalog fault dependency true
-node implementations/dummy-servers/fault.mjs catalog fault dependency false
-node implementations/dummy-servers/fault.mjs orders fault slowMs 1200
-node implementations/dummy-servers/fault.mjs catalog fault dependencySlowMs 800
-node implementations/dummy-servers/fault.mjs orders fault error true
-node implementations/dummy-servers/fault.mjs orders fault error false
-node implementations/dummy-servers/fault.mjs worker fault heartbeatLoss true
-node implementations/dummy-servers/fault.mjs scheduler fault missSchedule true
-node implementations/dummy-servers/fault.mjs orders fault drain true
-node implementations/dummy-servers/fault.mjs orders overflow
-node implementations/dummy-servers/fault.mjs orders2 stop
-node implementations/dummy-servers/fault.mjs orders2 restart
-node implementations/dummy-servers/fault.mjs catalog stop
-node implementations/dummy-servers/fault.mjs catalog restart
+npm ci
+python3 monitoring-system/scripts/monitoring.py init --profile local
+npm run build
+npm run typecheck:demo
+docker compose -f monitoring-system/docker/compose.yaml up --build -d
+npm run demo
 ```
 
-Reset each fault with `false` or `0`; restarting restores all defaults. `/error`
-produces a caught exception. Disconnect a client from `/stream` to create an aborted
-response. Low-disk fixtures belong on a disposable bounded test filesystem; do not
-fill your machine's disk. See the acceptance report for exercised fault coverage.
+`npm run build` compiles the SDK and these applications into ignored `dist/` output.
+The `demo` command runs the compiled JavaScript. Source remains in `src/` and uses
+strict TypeScript options including exact optional properties and unchecked-index
+checks.
 
-## Reporting and operational fixtures
+## How each app is configured
 
-The continuously running demo populates [Overview](http://localhost:8080/d/overview),
-[Service detail](http://localhost:8080/d/service), and
-[Uptime & reliability](http://localhost:8080/d/incidents). Readiness failure produces
-known downtime; an unavailable monitoring pipeline produces unknown time. Process
-uptime is a separate metric. Use the selected time range to compare recovery and
-maintenance; long SLO windows initially show insufficient coverage.
+[`src/bootstrap.ts`](src/bootstrap.ts) initializes monitoring before it dynamically
+imports Express, Fastify, or application HTTP code. The shared configuration is in
+[`src/demo-config.ts`](src/demo-config.ts), checked against the SDK's exported
+`MonitoringConfig` type. Its example enables:
 
-Additional self-contained fixtures from the repository root:
+- required project, service, environment, and instance identity plus build/host labels;
+- push metrics every two seconds;
+- central logs with a bounded 500-event queue and no duplicate stdout output;
+- traces;
+- readiness with a 500 ms dependency check;
+- OS-visible host, filesystem-visible, and cgroup capability measurements for one
+  designated publisher.
+
+Each role picks a typed service definition and a generated local token reference. For
+a real application, replace the demo resource identity, endpoint, token file, signal
+options, readiness dependency checks, and infrastructure scope with values for that
+service. Keep credentials in a secret manager or protected file; never add them to the
+TypeScript config or repository. The complete option descriptions and shutdown pattern
+are in the [SDK package reference](../../package/docs/package-reference.md).
+
+## Exercise the signals
+
+After `npm run build`, use the compiled and type-checked fault controller from the repo
+root:
 
 ```sh
-monitoring-system/.venv/bin/python monitoring-system/tests/reliability_live.py
-monitoring-system/.venv/bin/python monitoring-system/tests/native_notifications.py
-monitoring-system/.venv/bin/python monitoring-system/tests/metric_contract.py
-monitoring-system/.venv/bin/python monitoring-system/tests/storage_guard.py
-monitoring-system/.venv/bin/python monitoring-system/tests/offline_lifecycle.py
-monitoring-system/.venv/bin/python monitoring-system/tests/oom_fixture.py
+node implementations/dummy-servers/dist/fault.js catalog fault dependency true
+node implementations/dummy-servers/dist/fault.js catalog fault dependency false
+node implementations/dummy-servers/dist/fault.js orders fault slowMs 1200
+node implementations/dummy-servers/dist/fault.js orders fault error true
+node implementations/dummy-servers/dist/fault.js worker fault heartbeatLoss true
+node implementations/dummy-servers/dist/fault.js worker fault heartbeatLoss false
+node implementations/dummy-servers/dist/fault.js orders2 stop
+node implementations/dummy-servers/dist/fault.js orders2 restart
 ```
 
-Native receiver fixtures bind only to loopback and use generated demo data. Storage,
-OOM and offline fixtures use labelled isolated containers/volumes. They do not fill
-or remove the central data volume. Operational TLS, backup/restore and architecture
-fixtures temporarily stop the main stack and restore it afterwards; run them when an
-observation gap is acceptable. Restore the ordinary demo after each fault test.
+Other supported fault keys are `dependencySlowMs`, `stall`, `missSchedule`, and
+`drain`; `overflow` produces a bounded log burst. Values are validated both in the
+CLI and the loopback control server. Reset booleans to `false` and numeric values to
+`0`. The demo token protects fault control; the server listens only on loopback.
+
+See [Grafana's service guide](../../monitoring-system/docs/grafana-service.md) for the
+dashboard map and [uptime definitions](../../monitoring-system/docs/dashboards.md)
+for availability, downtime, unknown time, and coverage semantics.

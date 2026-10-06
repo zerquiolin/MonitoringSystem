@@ -12,7 +12,8 @@ implementations/            Demo applications built with the SDK
 The central service runs Grafana, Prometheus, Blackbox Exporter, Loki, Tempo, Alloy,
 the scoped control API and SQLite incident ledger, nginx, and process supervision in
 one Docker container. The SDK exports application metrics, logs, traces, heartbeats,
-and job events. The demo implementations generate traffic and controllable failures.
+and job events. The demo applications are strict TypeScript consumers of the SDK;
+they generate traffic and controllable failures.
 
 ## Quick start
 
@@ -52,8 +53,9 @@ Process uptime is a separate measure from service availability.
 
 ## Build and test
 
-The npm workspace at the repository root coordinates the independent SDK and demo
-implementation. Build and test with `npm run build` and `npm test`. The central
+The npm workspace at the repository root coordinates the independent SDK and typed
+demo implementations. `npm run build` compiles both, and `npm test` checks the SDK,
+type-checks the demo sources, and runs the central service's unit suite. The central
 service tests and operational tools are in `monitoring-system/`. Useful checks are:
 
 ```sh

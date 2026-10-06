@@ -3,6 +3,7 @@
 .venv/
 **/.venv/
 package/dist/
+**/dist/
 **/secrets/
 monitoring-system/config/generated*/
 monitoring-system/data/
