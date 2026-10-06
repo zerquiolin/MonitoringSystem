@@ -82,7 +82,7 @@ status class, and resource identity. Unknown/high-cardinality routes map to
 Custom instruments are restricted to the `app_business_*` namespace, approved label
 values, at most five label keys, 32 instrument names, and 100 series per instrument.
 Use `customCounter`, `customGauge`, or `customHistogram`; never use customer values as
-labels. See the [metric contract](../contracts/metrics.md) for names and units.
+labels. See the [metric contract](../../monitoring-system/contracts/metrics.md) for names and units.
 
 ## Health and readiness
 
@@ -157,7 +157,7 @@ npm test
 npm run pack
 ```
 
-The tarball is written under `artifacts/` and can be installed into a demo application
+The tarball is written under `monitoring-system/artifacts/` and can be installed into a demo application
 with `npm install /path/to/portable-observability-sdk-1.0.0.tgz`. Public entry points
 support ESM, CommonJS, and TypeScript. See the [integration guide](sdk-integration.md),
-[dashboard definitions](dashboards.md), and [complete metric contract](../contracts/metrics.md).
+[dashboard definitions](../../monitoring-system/docs/dashboards.md), and [complete metric contract](../../monitoring-system/contracts/metrics.md).

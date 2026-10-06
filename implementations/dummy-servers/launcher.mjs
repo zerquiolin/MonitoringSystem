@@ -2,7 +2,7 @@ import {fork} from 'node:child_process';
 import http from 'node:http';
 import {readFileSync,mkdirSync,writeFileSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
-const secret=readFileSync(new URL('../secrets/operator-token',import.meta.url),'utf8').trim();
+const secret=readFileSync(new URL('../../monitoring-system/secrets/operator-token',import.meta.url),'utf8').trim();
 const children=new Map();const roles=['orders','orders2','catalog','worker','scheduler'];const logs=[];
 function launch(role){const child=fork(fileURLToPath(new URL('./bootstrap.mjs',import.meta.url)),[],{env:{...process.env,DEMO_ROLE:role},stdio:['ignore','pipe','pipe','ipc']});children.set(role,child);child.stdout.on('data',d=>{logs.push(String(d));if(logs.length>100)logs.shift();});child.stderr.on('data',d=>process.stderr.write(role+': '+d));child.on('message',m=>{if(m.type==='ready')console.log(role+' ready'+(m.port?' on '+m.port:''));});child.on('exit',code=>{if(children.get(role)===child)children.delete(role);console.log(role+' stopped ('+code+')');});}
 for(const role of roles)launch(role);

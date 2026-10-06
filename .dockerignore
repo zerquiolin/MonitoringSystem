@@ -1,6 +1,15 @@
-node_modules
+# Keep the container build context limited to application source.
 .git
-secrets
-artifacts
+.github
+node_modules
 .venv
-**/__pycache__
+secrets
+**/secrets
+config/generated*
+**/config/generated*
+data
+backups
+artifacts
+**/artifacts
+package
+implementations

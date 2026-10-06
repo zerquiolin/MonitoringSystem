@@ -13,20 +13,20 @@ operator secret. These are deliberately faultable demo applications.
 Run these from the repository root:
 
 ```sh
-node dummy-servers/fault.mjs catalog fault dependency true
-node dummy-servers/fault.mjs catalog fault dependency false
-node dummy-servers/fault.mjs orders fault slowMs 1200
-node dummy-servers/fault.mjs catalog fault dependencySlowMs 800
-node dummy-servers/fault.mjs orders fault error true
-node dummy-servers/fault.mjs orders fault error false
-node dummy-servers/fault.mjs worker fault heartbeatLoss true
-node dummy-servers/fault.mjs scheduler fault missSchedule true
-node dummy-servers/fault.mjs orders fault drain true
-node dummy-servers/fault.mjs orders overflow
-node dummy-servers/fault.mjs orders2 stop
-node dummy-servers/fault.mjs orders2 restart
-node dummy-servers/fault.mjs catalog stop
-node dummy-servers/fault.mjs catalog restart
+node implementations/dummy-servers/fault.mjs catalog fault dependency true
+node implementations/dummy-servers/fault.mjs catalog fault dependency false
+node implementations/dummy-servers/fault.mjs orders fault slowMs 1200
+node implementations/dummy-servers/fault.mjs catalog fault dependencySlowMs 800
+node implementations/dummy-servers/fault.mjs orders fault error true
+node implementations/dummy-servers/fault.mjs orders fault error false
+node implementations/dummy-servers/fault.mjs worker fault heartbeatLoss true
+node implementations/dummy-servers/fault.mjs scheduler fault missSchedule true
+node implementations/dummy-servers/fault.mjs orders fault drain true
+node implementations/dummy-servers/fault.mjs orders overflow
+node implementations/dummy-servers/fault.mjs orders2 stop
+node implementations/dummy-servers/fault.mjs orders2 restart
+node implementations/dummy-servers/fault.mjs catalog stop
+node implementations/dummy-servers/fault.mjs catalog restart
 ```
 
 Reset each fault with `false` or `0`; restarting restores all defaults. `/error`
@@ -46,12 +46,12 @@ maintenance; long SLO windows initially show insufficient coverage.
 Additional self-contained fixtures from the repository root:
 
 ```sh
-.venv/bin/python tests/reliability_live.py
-.venv/bin/python tests/native_notifications.py
-.venv/bin/python tests/metric_contract.py
-.venv/bin/python tests/storage_guard.py
-.venv/bin/python tests/offline_lifecycle.py
-.venv/bin/python tests/oom_fixture.py
+monitoring-system/.venv/bin/python monitoring-system/tests/reliability_live.py
+monitoring-system/.venv/bin/python monitoring-system/tests/native_notifications.py
+monitoring-system/.venv/bin/python monitoring-system/tests/metric_contract.py
+monitoring-system/.venv/bin/python monitoring-system/tests/storage_guard.py
+monitoring-system/.venv/bin/python monitoring-system/tests/offline_lifecycle.py
+monitoring-system/.venv/bin/python monitoring-system/tests/oom_fixture.py
 ```
 
 Native receiver fixtures bind only to loopback and use generated demo data. Storage,

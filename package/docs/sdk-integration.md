@@ -1,6 +1,6 @@
 # Application integration
 
-Build and pack the package, then install `artifacts/portable-observability-sdk-1.0.0.tgz`
+Build and pack the package, then install `monitoring-system/artifacts/portable-observability-sdk-1.0.0.tgz`
 in another application. Node 22 or newer is required. No servers or process handlers
 start merely by importing the module. Bootstrap runs before framework/client imports:
 

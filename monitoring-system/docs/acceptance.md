@@ -72,5 +72,5 @@ not tested. The one-container design intentionally has one host/failure domain; 
 cannot alert after its own entire host loses power. No production data or credentials
 are included in distributable source, SDK or image archives.
 
-See `artifacts/completion-matrix.json` for criterion-specific evidence. The project
+See `../artifacts/completion-matrix.json` for criterion-specific evidence. The project
 owner keeps distributable checksums alongside the source archive.

@@ -1,103 +1,76 @@
 # Portable application observability
 
-A portable observability stack for multiple applications and microservices. One
-central Docker container runs Grafana, Prometheus, Blackbox Exporter, Loki, Tempo,
-Alloy, the scoped control API and SQLite incident ledger, nginx, and process
-supervision. Applications use the separate Node.js/TypeScript SDK. The
-[`dummy-servers/`](dummy-servers/README.md) demo generates real traffic, logs, traces,
-heartbeats, scheduled work, and controllable failures.
+A multi-service observability stack with a standalone Node.js/TypeScript SDK and
+runnable application examples. The repository is separated by responsibility:
+
+```text
+monitoring-system/          Central monitoring service, configuration, dashboards, operations, tests
+package/                    Installable @portable-observability/sdk
+implementations/            Demo applications built with the SDK
+```
+
+The central service runs Grafana, Prometheus, Blackbox Exporter, Loki, Tempo, Alloy,
+the scoped control API and SQLite incident ledger, nginx, and process supervision in
+one Docker container. The SDK exports application metrics, logs, traces, heartbeats,
+and job events. The demo implementations generate traffic and controllable failures.
 
 ## Quick start
 
 Requirements: Docker with 4 GiB of memory available, Node.js 22+, npm, and Python
-3.11+. From the repository root:
+3.11+. Run the following from the repository root:
 
 ```sh
-python3.11 -m venv .venv
-.venv/bin/pip install -r docker/control/requirements.lock.txt
+python3 -m venv monitoring-system/.venv
+monitoring-system/.venv/bin/pip install -r monitoring-system/docker/control/requirements.lock.txt
 npm ci
-python3 scripts/monitoring.py init --profile local
-python3 scripts/monitoring.py validate --config config/inventory.yaml
-python3 scripts/monitoring.py render --config config/inventory.yaml
+python3 monitoring-system/scripts/monitoring.py init --profile local
+python3 monitoring-system/scripts/monitoring.py validate --config monitoring-system/config/inventory.yaml
 npm run build
 npm test
-docker compose -f docker/compose.yaml up --build -d
+docker compose -f monitoring-system/docker/compose.yaml up --build -d
 npm run demo
 ```
 
 Keep `npm run demo` running. Open [Grafana](http://localhost:8080/d/overview/overview)
-and sign in as `admin` with the generated password in `secrets/grafana-admin`. The
-Observability folder has eight provisioned dashboards. Live request metrics arrive
-immediately; logs, traces, and reliability observations follow as the demo runs.
-The second orders replica demonstrates quorum and partial failure. See the
-[dummy-server guide](dummy-servers/README.md) for fault controls and recovery.
+and sign in as `admin` with the generated password in
+`monitoring-system/secrets/grafana-admin`. The eight dashboards are provisioned
+under the Observability folder. See the
+[implementation guide](implementations/README.md) for demo scenarios and controls.
 
-To stop the demo, press Ctrl+C in its terminal. Stop the central service with
-`docker compose -f docker/compose.yaml stop`; its persistent volume retains data.
+## Documentation
 
-## Dashboards and reliability
+- [Monitoring system and Grafana](monitoring-system/docs/grafana-service.md)
+- [Operations and deployment](monitoring-system/docs/operations.md)
+- [Architecture and signal flow](monitoring-system/docs/architecture.md)
+- [Uptime and reliability definitions](monitoring-system/docs/dashboards.md)
+- [SDK package reference](package/docs/package-reference.md)
+- [SDK integration examples](package/docs/sdk-integration.md)
 
-The [Grafana service guide](docs/grafana-service.md) explains provisioning, data
-sources, dashboard navigation, alerts, credentials, and troubleshooting. The
-[dashboard guide](docs/dashboards.md) defines the reliability measurements. Uptime,
-downtime, unknown time, availability, and observation coverage use the selected time
-range; process uptime is a separate measure. Reports preserve missing evidence as
-unknown instead of counting it as successful uptime. The service and incident report
-APIs export JSON or CSV under the authenticated control API.
+Reliability views distinguish uptime, downtime, degraded, unknown, maintenance,
+availability, and observation coverage. Missing telemetry is not counted as uptime.
+Process uptime is a separate measure from service availability.
 
-## Application SDK
+## Build and test
 
-The [`package/`](package/) directory is the independently installable TypeScript SDK.
-See the [package reference](docs/package-reference.md) for setup, configuration,
-metrics, health/readiness, logging, tracing, workers, shutdown, and limits; the
-[integration guide](docs/sdk-integration.md) provides framework examples. Build and
-test it with `npm run build`, `npm test`, then create an installable tarball with
-`npm run pack`.
-
-## Configuration, operation, and tests
-
-`python3 scripts/monitoring.py --help` lists configuration validation/render/diff,
-apply/rollback, token rotation/revocation, backup/restore, diagnostics, and
-notification tests. Read [operations](docs/operations.md), [architecture](docs/architecture.md),
-[metrics and reliability definitions](docs/metrics-and-reliability.md), and the
-[acceptance audit](docs/acceptance.md) before operational deployment.
-
-Useful local checks:
+The npm workspace at the repository root coordinates the independent SDK and demo
+implementation. Build and test with `npm run build` and `npm test`. The central
+service tests and operational tools are in `monitoring-system/`. Useful checks are:
 
 ```sh
 npm run test:integration
 npm run test:acceptance
-python3 tests/dashboard_queries.py
-python3 tests/reliability_live.py
-python3 scripts/monitoring.py diagnose
-python3 scripts/monitoring.py notification-test
+docker compose -f monitoring-system/docker/compose.yaml stop
 ```
 
-## Build and export images
+The container image is built from source; the large prebuilt archive is not stored in
+Git. Image build and export instructions are in
+[monitoring-system/README.md](monitoring-system/README.md).
 
-The repository builds images locally; the large prebuilt image archive is kept out
-of Git. Build the native architecture with Compose:
+## Repository boundaries
 
-```sh
-docker compose -f docker/compose.yaml build monitoring
-```
-
-Build AMD64 and ARM64 variants with Docker Buildx when needed:
-
-```sh
-docker buildx build --platform linux/amd64 -f docker/Dockerfile -t portable-observability:amd64 --load .
-docker buildx build --platform linux/arm64 -f docker/Dockerfile -t portable-observability:arm64 --load .
-```
-
-Export locally with `docker save portable-observability:local -o monitoring-image.tar`
-and load it on a compatible host with `docker load -i monitoring-image.tar`. Runtime
-startup requires no package or plugin downloads.
-
-## Operational deployment
-
-The local profile binds HTTP to host loopback and generates private credentials. An
-operational deployment needs a verified TLS certificate/key, an HTTPS `publicUrl`,
-approved application networks, reachable probe targets, and configured notification
-destinations and credentials. Configure and test these with the actual deployment
-environment. This single-container design shares one host failure domain and cannot
-run alerting while that host is unavailable.
+`monitoring-system/` owns the Grafana service, inventory, data contracts, dashboards,
+operations scripts, and service tests. `package/` owns the reusable SDK and its
+package documentation. `implementations/` contains sample applications that consume
+the SDK. Root `package.json` and `package-lock.json` manage the npm workspaces only.
+Credentials, generated configuration, virtual environments, and runtime data stay
+outside source control.

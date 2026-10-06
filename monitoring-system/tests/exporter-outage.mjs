@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {initializeMonitoring} from '../package/dist/index.js';
+import {initializeMonitoring} from '../../package/dist/index.js';
 // SDK boot precedes HTTP modules; sink fails, then recovers without blocking the app.
 const m=await initializeMonitoring({resource:{project:'test',service:'outage',environment:'test',instance:'one'},endpoint:'http://127.0.0.1:18419',token:'fixture',metrics:{mode:'push',intervalMs:1000},traces:{enabled:true},logs:{stdout:false,queueSize:50,batchSize:10}});
 const http=await import('node:http');let fail=true;const ids=new Set();

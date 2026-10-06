@@ -5,7 +5,7 @@ import {readFileSync} from 'node:fs';
 const definitions={orders:['orders-api','demo-orders',4101],orders2:['orders-api','demo-orders',4103],catalog:['catalog-api','demo-catalog',4102],worker:['billing-worker','demo-worker'],scheduler:['nightly-job','demo-scheduler']};
 const role=process.env.DEMO_ROLE??'orders';const [service,ref,port]=definitions[role];
 const state={dependency:false,slowMs:0,dependencySlowMs:0,error:false,heartbeatLoss:false,stall:false,missSchedule:false};
-const tokenFile=fileURLToPath(new URL('../secrets/'+ref,import.meta.url));
+const tokenFile=fileURLToPath(new URL('../../monitoring-system/secrets/'+ref,import.meta.url));
 const monitoring=await initializeMonitoring({resource:{project:'commerce',service,environment:'demo',instance:service+(role==='orders2'?'-2':'-1'),hostId:'demo-local',buildId:'demo-1'},endpoint:process.env.MONITORING_ENDPOINT??'http://localhost:8080',tokenFile,metrics:{mode:'push',intervalMs:2000},logs:{enabled:true,stdout:false,queueSize:500},traces:{enabled:true},readiness:{timeoutMs:500,checks:{dependency:{check:async()=>!state.dependency}}},infrastructure:{hostPublisher:role==='orders',filesystemPaths:role==='orders'?['.']:[],cgroup:true}});
 process.on('message',async message=>{if(message.type==='fault'){Object.assign(state,message.values);if('drain'in message.values)monitoring.setReady(!message.values.drain);}if(message.type==='overflow'){for(let i=0;i<2000;i++)monitoring.logger.info('Burst fixture',{index:i,password:'SENSITIVE_FIXTURE'});}});
 let server;let timer;let stalled=false;

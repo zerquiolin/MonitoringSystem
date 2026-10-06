@@ -9,8 +9,8 @@ jobs:
         with: {node-version: '22'}
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
-      - run: python -m venv .venv && .venv/bin/pip install -r docker/control/requirements.lock.txt
-      - run: npm ci && python scripts/monitoring.py init && npm run build && npm test && npm run test:integration && npm run pack && node scripts/package-test.mjs
+      - run: python -m venv monitoring-system/.venv && monitoring-system/.venv/bin/pip install -r monitoring-system/docker/control/requirements.lock.txt
+      - run: npm ci && python monitoring-system/scripts/monitoring.py init && npm run build && npm test && npm run test:integration && npm run pack && node monitoring-system/scripts/package-test.mjs
   container:
     strategy:
       matrix: {platform: [linux/amd64, linux/arm64]}
@@ -22,7 +22,7 @@ jobs:
       - uses: docker/build-push-action@v6
         with:
           context: .
-          file: docker/Dockerfile
+          file: monitoring-system/docker/Dockerfile
           platforms: ${{ matrix.platform }}
           tags: portable-observability:local
           load: true
@@ -30,10 +30,10 @@ jobs:
         with: {python-version: '3.12'}
       - uses: actions/setup-node@v4
         with: {node-version: '22'}
-      - run: python -m venv .venv && .venv/bin/pip install -r docker/control/requirements.lock.txt && python scripts/monitoring.py init && npm ci && npm run build
-      - run: docker compose -f docker/compose.yaml up -d --no-build
+      - run: python -m venv monitoring-system/.venv && monitoring-system/.venv/bin/pip install -r monitoring-system/docker/control/requirements.lock.txt && python monitoring-system/scripts/monitoring.py init && npm ci && npm run build
+      - run: docker compose -f monitoring-system/docker/compose.yaml up -d --no-build
       - run: nohup npm run demo > /tmp/demo.log 2>&1 &
       - run: npm run test:acceptance
       - uses: actions/upload-artifact@v4
         if: always()
-        with: {name: 'evidence-${{ strategy.job-index }}', path: artifacts/acceptance.json}
+        with: {name: 'evidence-${{ strategy.job-index }}', path: monitoring-system/artifacts/acceptance.json}

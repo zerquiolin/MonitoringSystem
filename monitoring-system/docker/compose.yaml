@@ -3,8 +3,8 @@ services:
   monitoring:
     image: portable-observability:local
     build:
-      context: ..
-      dockerfile: docker/Dockerfile
+      context: ../..
+      dockerfile: monitoring-system/docker/Dockerfile
     ports:
       - "127.0.0.1:8080:8080"
       - "127.0.0.1:8443:8443"

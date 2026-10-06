@@ -1,7 +1,7 @@
 # Operator procedures
 
-Run commands from the root README location, or invoke the Python CLI by absolute
-path: it resolves repository paths itself. `init` never overwrites existing operator
+Run commands from `monitoring-system/`, or invoke the Python CLI by absolute path.
+The CLI resolves its files relative to this folder. `init` never overwrites existing operator
 configuration/secrets. Secret files are mode 0600; the containing directory is 0700.
 Do not commit or distribute `secrets/`, generated provisioning, data volumes, or backups.
 Admin password is in `secrets/grafana-admin`; do not put it in shell arguments/history.
@@ -86,8 +86,8 @@ alert rules are explicitly deleted; dashboard provisioning removes absent owned 
 
 ## Tested operating envelope and storage admission
 
-See `artifacts/capacity.json` for the ten-minute full trace/log/metric workload and
-`artifacts/benchmark.json` for the isolated SDK comparison. These are measured local
+See `../artifacts/capacity.json` for the ten-minute full trace/log/metric workload and
+`../artifacts/benchmark.json` for the isolated SDK comparison. These are measured local
 budgets, not universal sizing promises. Reserve disk for WALs, indices and compaction.
 Ingress returns 503 below 64 MiB available control-volume space; configure
 `MONITORING_MIN_FREE_BYTES` to raise this reserve. SDK retry/queue budgets still apply.

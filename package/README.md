@@ -27,9 +27,9 @@ bounded shutdown. The application owns its HTTP server and process lifecycle.
 
 ## Documentation
 
-- [Full SDK package reference](https://github.com/zerquiolin/MonitoringSystem/blob/main/docs/package-reference.md)
-- [Framework integration examples](https://github.com/zerquiolin/MonitoringSystem/blob/main/docs/sdk-integration.md)
-- [Central Grafana service guide](https://github.com/zerquiolin/MonitoringSystem/blob/main/docs/grafana-service.md)
+- [Full SDK package reference](https://github.com/zerquiolin/MonitoringSystem/blob/main/package/docs/package-reference.md)
+- [Framework integration examples](https://github.com/zerquiolin/MonitoringSystem/blob/main/package/docs/sdk-integration.md)
+- [Central Grafana service guide](https://github.com/zerquiolin/MonitoringSystem/blob/main/monitoring-system/docs/grafana-service.md)
 
 Pull and push metrics are mutually exclusive. Log delivery uses bounded best-effort
 queues, not exactly-once durability. Health/readiness do not prove remote dependency
