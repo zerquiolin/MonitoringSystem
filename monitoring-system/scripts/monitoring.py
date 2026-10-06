@@ -3,7 +3,7 @@
 import sys,os
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-if (ROOT/'.venv/bin/python').exists() and sys.prefix!=str(ROOT/'.venv'):
+if not os.getenv('MONITORING_SKIP_VENV') and (ROOT/'.venv/bin/python').exists() and sys.prefix!=str(ROOT/'.venv'):
  os.execv(str(ROOT/'.venv/bin/python'),[str(ROOT/'.venv/bin/python'),__file__,*sys.argv[1:]])
 sys.path.insert(0,str(ROOT/'docker/control'))
 import argparse,json,secrets,hashlib,shutil,subprocess,tempfile,difflib,tarfile,time,urllib.request

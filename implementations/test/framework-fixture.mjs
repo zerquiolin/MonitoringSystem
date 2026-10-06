@@ -1,5 +1,5 @@
 // Isolated process tests process-wide OTel providers correctly.
-import {initializeMonitoring} from '../../package/dist/index.js';
+import {initializeMonitoring} from '@portable-observability/sdk';
 const m=await initializeMonitoring({resource:{project:'test',service:'api',environment:'test',instance:'one'},endpoint:'http://127.0.0.1:1',token:'test',metrics:{mode:'pull'},logs:{stdout:false,queueSize:8},traces:{enabled:false},readiness:{checks:{db:{check:async signal=>{await new Promise(resolve=>setTimeout(resolve,10));return !signal.aborted;}}}}});
 const same=await initializeMonitoring({resource:{project:'test',service:'api',environment:'test',instance:'one'},endpoint:'http://127.0.0.1:1',token:'test',metrics:{mode:'pull'},logs:{stdout:false,queueSize:8},traces:{enabled:false},readiness:{checks:{db:{check:async()=>true}}}});if(same!==m)throw new Error('singleton');
 const http=await import('node:http');const express=(await import('express')).default;const Fastify=(await import('fastify')).default;

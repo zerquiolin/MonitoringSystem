@@ -13,12 +13,12 @@ COPY --from=blackbox /bin/blackbox_exporter /usr/local/bin/
 COPY --from=loki /usr/bin/loki /usr/local/bin/loki
 COPY --from=tempo /tempo /usr/local/bin/tempo
 COPY --from=alloy /bin/alloy /usr/local/bin/alloy
-COPY monitoring-system/docker/control/requirements.lock.txt /tmp/requirements.txt
+COPY docker/control/requirements.lock.txt /tmp/requirements.txt
 RUN python3 -m venv /opt/venv && /opt/venv/bin/pip install --no-cache-dir -r /tmp/requirements.txt
 RUN mkdir -p /opt/grafana-plugins && grafana cli --pluginsDir /opt/grafana-plugins plugins install yesoreyeram-infinity-datasource 3.7.3
-COPY monitoring-system/docker /opt/monitoring/docker
-COPY monitoring-system/contracts /opt/monitoring/contracts
-COPY monitoring-system/scripts /opt/monitoring/scripts
+COPY docker /opt/monitoring/docker
+COPY contracts /opt/monitoring/contracts
+COPY scripts /opt/monitoring/scripts
 COPY LICENSE NOTICE.md /opt/monitoring/
 RUN useradd --uid 10001 --home /data --no-create-home monitoring && mkdir -p /run/monitoring /data && chown monitoring:monitoring /run/monitoring /data && chmod +x /opt/monitoring/docker/runtime/entrypoint.sh
 ENV PATH="/opt/venv/bin:$PATH" PYTHONPATH="/opt/monitoring/docker/control" PYTHONUNBUFFERED=1

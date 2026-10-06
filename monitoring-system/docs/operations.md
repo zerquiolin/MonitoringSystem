@@ -1,7 +1,11 @@
 # Operator procedures
 
-Run commands from `monitoring-system/`, or invoke the Python CLI by absolute path.
-The CLI resolves its files relative to this folder. `init` never overwrites existing operator
+Docker-based deployment does not require host Python. The container helper can run
+`init`, `validate`, `render`, and `diff` from `monitoring-system/`. Direct host-side
+Python CLI operations such as `apply`, `rollback`, and backup management require the
+optional `.venv` created from `docker/control/requirements.lock.txt`. Run CLI commands
+from `monitoring-system/`, or invoke the Python CLI by absolute path. The CLI resolves
+its files relative to this folder. `init` never overwrites existing operator
 configuration/secrets. Secret files are mode 0600; the containing directory is 0700.
 Do not commit or distribute `secrets/`, generated provisioning, data volumes, or backups.
 Admin password is in `secrets/grafana-admin`; do not put it in shell arguments/history.

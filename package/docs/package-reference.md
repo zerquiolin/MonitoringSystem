@@ -8,7 +8,18 @@ stack; the [SDK integration guide](sdk-integration.md) has framework recipes.
 
 ## Install and initialize
 
-Install the published package or build a local tarball from this repository. The
+Install the published package or build a local tarball from this repository. To
+work on the package from this repository, use its project folder and lockfile:
+
+```sh
+cd package
+npm ci
+npm run build
+npm test
+npm pack --pack-destination ../monitoring-system/artifacts
+```
+
+The monitoring system and demo projects have their own environments. The
 application must reach the central gateway and read its private token. Initialize
 once, before importing libraries that need automatic instrumentation:
 

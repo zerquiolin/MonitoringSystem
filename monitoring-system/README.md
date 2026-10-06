@@ -1,29 +1,49 @@
 # Monitoring system
 
-This folder contains the central observability service: Grafana dashboards, backend
-configuration, inventory and schemas, the Python control API and operations CLI,
-container definition, and service-level tests. The reusable SDK is maintained
-separately in [`../package/`](../package/); runnable SDK consumers are in
-[`../implementations/`](../implementations/).
+This is the self-contained Docker project for the central observability service: Grafana dashboards, Prometheus, Blackbox Exporter, Loki, Tempo, Alloy, the scoped control API and incident ledger, configuration, and operational tooling. Its image builds only from this folder and does not depend on the SDK or demo applications.
 
-## Local setup
+## Requirements and deployment
 
-Run commands from the repository root unless noted:
+For image build, export, initialization, and Compose startup, the host needs Docker Engine, Docker Compose, and Docker Buildx. Python and Node.js are installed or run inside containers when needed; no host Python environment is required for a normal deployment.
+
+From an SSH clone, run:
 
 ```sh
-python3 -m venv monitoring-system/.venv
-monitoring-system/.venv/bin/pip install -r monitoring-system/docker/control/requirements.lock.txt
-python3 monitoring-system/scripts/monitoring.py init --profile local
-python3 monitoring-system/scripts/monitoring.py validate --config monitoring-system/config/inventory.yaml
-npm ci
-npm run build
-npm test
-docker compose -f monitoring-system/docker/compose.yaml up --build -d
-npm run demo
+cd MonitoringSystem/monitoring-system
+scripts/container-cli.sh init --profile local
+docker compose -f docker/compose.yaml up --build -d
 ```
 
-Open Grafana at [http://localhost:8080](http://localhost:8080). The generated admin
-password is in the ignored `monitoring-system/secrets/grafana-admin` file.
+Open [Grafana](http://localhost:8080). The generated administrator password is in `secrets/grafana-admin`. To stop the service, run `docker compose -f docker/compose.yaml down` from this folder.
+
+The `local` profile is for evaluation. Before production, use an operational inventory with verified TLS, target allowlists, secret references, durable storage, and tested notification destinations. Follow [operations](docs/operations.md) and keep secrets, generated configuration, data, and backups out of source control.
+
+## Build and export the image
+
+Compose uses this folder as its Docker build context:
+
+```sh
+docker compose -f docker/compose.yaml build monitoring
+```
+
+For an explicit architecture build, run from this folder:
+
+```sh
+docker buildx build --platform linux/amd64 -f docker/Dockerfile -t portable-observability:amd64 --load .
+docker save portable-observability:amd64 -o portable-observability-amd64.tar
+```
+
+The Dockerfile installs its Python virtual environment and locked control API dependencies inside the image. The large prebuilt image archive is not stored in Git. Docker build inputs and the runtime are all within this project folder.
+
+## Host-side operational CLI
+
+The Python virtual environment is optional and only needed when running the host CLI directly for operations such as `apply`, `rollback`, or backup management. You can instead use the container helper for `init`, `validate`, `render`, and `diff`:
+
+```sh
+scripts/container-cli.sh validate --config config/inventory.yaml
+```
+
+For direct host-side Python commands, create the environment described in [operations](docs/operations.md).
 
 ## Guides
 
@@ -33,29 +53,3 @@ password is in the ignored `monitoring-system/secrets/grafana-admin` file.
 - [Uptime and reliability definitions](docs/dashboards.md)
 - [Metrics and signal semantics](docs/metrics-and-reliability.md)
 - [Acceptance evidence](docs/acceptance.md)
-
-For DevOps deployment, use the operational profile with verified TLS, production
-inventory and target allowlists, secret references, durable storage, and tested
-notification destinations. Keep `secrets/`, generated configuration, runtime data,
-and backups out of source control. See [operations](docs/operations.md) for
-configuration changes, credential rotation, backup/restore, retention, and recovery.
-
-
-## Build and export the container image
-
-From the repository root, build the native architecture with Compose:
-
-```sh
-docker compose -f monitoring-system/docker/compose.yaml build monitoring
-```
-
-For an explicit multi-architecture build, use Docker Buildx:
-
-```sh
-docker buildx build --platform linux/amd64 -f monitoring-system/docker/Dockerfile -t portable-observability:amd64 --load .
-docker buildx build --platform linux/arm64 -f monitoring-system/docker/Dockerfile -t portable-observability:arm64 --load .
-```
-
-The Docker build context is the repository root. Source-controlled Docker inputs stay
-in this folder; SDK sources and demo applications are excluded from the monitoring
-image. The large prebuilt image archive is intentionally not in Git.

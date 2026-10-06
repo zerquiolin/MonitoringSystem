@@ -16,7 +16,7 @@ try {
   run(process.execPath, ['-e', "const s=require('@portable-observability/sdk');if(typeof s.initializeMonitoring!=='function')process.exit(1)"]);
   run(process.execPath, ['--input-type=module', '-e', "import {initializeMonitoring} from '@portable-observability/sdk';if(typeof initializeMonitoring!=='function')process.exit(1)"]);
   writeFileSync(join(dir, 'consumer.ts'), "import {initializeMonitoring, type MonitoringConfig} from '@portable-observability/sdk'; const c: MonitoringConfig={resource:{project:'p',service:'s',environment:'e',instance:'i'},endpoint:'https://monitor.example',token:'x'};initializeMonitoring(c).then(m=>m.withSpan('op',{},async()=>42));");
-  run(resolve(repoRoot, 'node_modules/.bin/tsc'), ['--noEmit', '--strict', '--skipLibCheck', '--module', 'NodeNext', '--target', 'ES2022', join(dir, 'consumer.ts')]);
+  run(resolve(repoRoot, 'package/node_modules/.bin/tsc'), ['--noEmit', '--strict', '--skipLibCheck', '--module', 'NodeNext', '--target', 'ES2022', join(dir, 'consumer.ts')]);
   console.log('Installed tarball CJS, ESM, and TypeScript consumers passed');
 } finally {
   rmSync(dir, { recursive: true, force: true });

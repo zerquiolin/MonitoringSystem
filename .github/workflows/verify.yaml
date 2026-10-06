@@ -7,10 +7,31 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: {node-version: '22'}
+      - run: npm ci --prefix package
+      - run: npm run build --prefix package
+      - run: npm test --prefix package
+      - run: npm pack --prefix package --pack-destination monitoring-system/artifacts
+      - run: node monitoring-system/scripts/package-test.mjs
+  implementations:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - run: npm ci --prefix package
+      - run: npm run build --prefix package
+      - run: npm ci --prefix implementations
+      - run: npm run build --prefix implementations
+      - run: npm test --prefix implementations
+  monitoring-system:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
       - run: python -m venv monitoring-system/.venv && monitoring-system/.venv/bin/pip install -r monitoring-system/docker/control/requirements.lock.txt
-      - run: npm ci && python monitoring-system/scripts/monitoring.py init && npm run build && npm test && npm run test:integration && npm run pack && node monitoring-system/scripts/package-test.mjs
+      - run: python monitoring-system/scripts/monitoring.py init --profile local && python monitoring-system/scripts/monitoring.py validate --config monitoring-system/config/inventory.yaml
+      - run: monitoring-system/.venv/bin/python -m unittest discover -s monitoring-system/tests -p 'test_*.py'
   container:
     strategy:
       matrix: {platform: [linux/amd64, linux/arm64]}
@@ -21,8 +42,8 @@ jobs:
       - uses: docker/setup-buildx-action@v3
       - uses: docker/build-push-action@v6
         with:
-          context: .
-          file: monitoring-system/docker/Dockerfile
+          context: ./monitoring-system
+          file: ./monitoring-system/docker/Dockerfile
           platforms: ${{ matrix.platform }}
           tags: portable-observability:local
           load: true
@@ -30,10 +51,11 @@ jobs:
         with: {python-version: '3.12'}
       - uses: actions/setup-node@v4
         with: {node-version: '22'}
-      - run: python -m venv monitoring-system/.venv && monitoring-system/.venv/bin/pip install -r monitoring-system/docker/control/requirements.lock.txt && python monitoring-system/scripts/monitoring.py init && npm ci && npm run build
+      - run: python -m venv monitoring-system/.venv && monitoring-system/.venv/bin/pip install -r monitoring-system/docker/control/requirements.lock.txt && python monitoring-system/scripts/monitoring.py init --profile local
+      - run: npm ci --prefix package && npm run build --prefix package && npm ci --prefix implementations && npm run build --prefix implementations
       - run: docker compose -f monitoring-system/docker/compose.yaml up -d --no-build
-      - run: nohup npm run demo > /tmp/demo.log 2>&1 &
-      - run: npm run test:acceptance
+      - run: cd implementations && nohup npm run demo > /tmp/demo.log 2>&1 &
+      - run: python monitoring-system/tests/acceptance.py
       - uses: actions/upload-artifact@v4
         if: always()
         with: {name: 'evidence-${{ strategy.job-index }}', path: monitoring-system/artifacts/acceptance.json}
