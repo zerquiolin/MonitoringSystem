@@ -49,6 +49,7 @@ For direct host-side Python commands, create the environment described in [opera
 
 - [Grafana and dashboards](docs/grafana-service.md)
 - [Operations and deployment](docs/operations.md)
+- [GitHub Actions production deployment](docs/deployment.md)
 - [Architecture](docs/architecture.md)
 - [Uptime and reliability definitions](docs/dashboards.md)
 - [Metrics and signal semantics](docs/metrics-and-reliability.md)

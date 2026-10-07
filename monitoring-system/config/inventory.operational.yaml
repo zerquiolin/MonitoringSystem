@@ -1,0 +1,87 @@
+profile: operational
+publicUrl: https://monitoring.macondosoftwares.com
+tls:
+  certificateRef: tls-cert
+  keyRef: tls-key
+
+projects:
+  - id: mimunicipio
+    criticalServices:
+      - web
+
+services:
+  - project: mimunicipio
+    service: web
+    environment: prod
+    kind: http
+    owner: platform-team
+    criticality: critical
+    instances:
+      - id: prod-public
+        healthUrl: https://mimunicipio.toka.com.mx/health
+        readyUrl: https://mimunicipio.toka.com.mx/ready
+        observationType: service-endpoint
+    quorum: 1
+    metrics:
+      mode: push
+      tokenRef: mimunicipio-prod
+    checks:
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      expectedStatus: 200
+    objectives:
+      probeAvailability:
+        target: 0.99
+        windowDays: 30
+
+  - project: mimunicipio
+    service: web
+    environment: qa
+    kind: http
+    owner: platform-team
+    criticality: normal
+    instances:
+      - id: qa-public
+        healthUrl: https://mimunicipio.macondosoftwares.com/health
+        readyUrl: https://mimunicipio.macondosoftwares.com/ready
+        observationType: service-endpoint
+    quorum: 1
+    metrics:
+      mode: push
+      tokenRef: mimunicipio-qa
+    checks:
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      expectedStatus: 200
+    objectives:
+      probeAvailability:
+        target: 0.99
+        windowDays: 30
+
+network:
+  allowedHosts:
+    - mimunicipio.toka.com.mx
+    - mimunicipio.macondosoftwares.com
+  allowedCidrs:
+    - 10.0.0.0/8
+    - 172.16.0.0/12
+    - 192.168.0.0/16
+    - fdc4:f303:9324::254/128
+
+retention:
+  metricsDays: 7
+  metricsSize: 1GB
+  logsDays: 7
+  tracesHours: 48
+  controlDays: 90
+
+policies:
+  failureCount: 2
+  recoveryCount: 2
+  startupGraceSeconds: 20
+  freshnessSeconds: 30
+  alertPendingSeconds: 10
+
+notifications:
+  - name: local
+    type: local

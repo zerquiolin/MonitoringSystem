@@ -1,0 +1,11 @@
+# Production overlay: let the existing Nginx container reach the gateway over
+# the shared Docker network. The base Compose file remains isolated for local use.
+services:
+  monitoring:
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    name: soporte_toka_default
+    external: true

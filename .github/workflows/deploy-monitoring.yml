@@ -1,0 +1,203 @@
+name: Deploy monitoring service
+
+on:
+  workflow_run:
+    workflows: ['Verify portable monitoring']
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: monitoring-production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: >-
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Configure SSH
+        shell: bash
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          install -m 700 -d "$HOME/.ssh"
+          printf '%s\n' "$DEPLOY_SSH_KEY" > "$HOME/.ssh/id_ed25519"
+          chmod 600 "$HOME/.ssh/id_ed25519"
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+          chmod 600 "$HOME/.ssh/known_hosts"
+
+      - name: Transfer monitoring project and operational inventory
+        shell: bash
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          set -euo pipefail
+          ssh -i "$HOME/.ssh/id_ed25519" -o IdentitiesOnly=yes -o BatchMode=yes \
+            "$DEPLOY_USER@$DEPLOY_HOST" "mkdir -p '$DEPLOY_PATH'"
+          rsync -az --delete \
+            --exclude='/.git/' \
+            --exclude='/.venv/' \
+            --exclude='/**/.venv/' \
+            --exclude='/**/node_modules/' \
+            --exclude='/secrets/' \
+            --exclude='/data/' \
+            --exclude='/backups/' \
+            --exclude='/artifacts/' \
+            --exclude='/config/inventory.yaml' \
+            --exclude='/config/inventory.previous.yaml' \
+            --exclude='/config/generated/' \
+            --exclude='/config/generated.previous/' \
+            -e "ssh -i $HOME/.ssh/id_ed25519 -o IdentitiesOnly=yes -o BatchMode=yes" \
+            monitoring-system/ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
+
+      - name: Validate and deploy on server
+        shell: bash
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          set -euo pipefail
+          printf -v quoted_path '%q' "$DEPLOY_PATH"
+          ssh -i "$HOME/.ssh/id_ed25519" -o IdentitiesOnly=yes -o BatchMode=yes \
+            "$DEPLOY_USER@$DEPLOY_HOST" "bash -s -- $quoted_path" <<'REMOTE'
+          set -euo pipefail
+          deploy_path="$1"
+          cd "$deploy_path"
+
+          test -s config/inventory.operational.yaml || { echo 'Operational inventory was not transferred.' >&2; exit 1; }
+          install -m 0700 -d secrets
+
+          # Bootstrap generated Grafana/operator credentials once; init preserves any existing files.
+          if ! test -s secrets/grafana-admin || ! test -s secrets/grafana-key || \
+             ! test -s secrets/dashboard-read || ! test -s secrets/operator-token; then
+            bash scripts/container-cli.sh init --profile operational
+          fi
+
+          # Create stable, high-entropy app tokens only on first deployment. Never print or replace them.
+          umask 077
+          for token_file in mimunicipio-prod mimunicipio-qa; do
+            if ! test -s "secrets/$token_file"; then
+              openssl rand -hex 32 > "secrets/$token_file"
+              chmod 0600 "secrets/$token_file"
+            fi
+          done
+
+          # Configure the existing Nginx container and issue/renew the public TLS cert.
+          nginx_conf_dir=/root/Soporte_Toka/nginx/conf.d
+          nginx_container=soporte_toka-nginx-1
+          certbot_webroot=/root/Soporte_Toka/certbot-webroot
+          cert_dir=/etc/letsencrypt/live/monitoring.macondosoftwares.com
+          if command -v certbot >/dev/null 2>&1; then
+            certbot_bin="$(command -v certbot)"
+          elif test -x /snap/bin/certbot; then
+            certbot_bin=/snap/bin/certbot
+          else
+            echo 'Certbot is not installed on the server.' >&2
+            exit 1
+          fi
+
+          install -d -m 0755 "$nginx_conf_dir"
+          nginx_site="$nginx_conf_dir/monitoring.macondosoftwares.com.conf"
+          set_nginx_site() {
+            install -m 0644 "$1" "$nginx_site"
+            if ! docker exec "$nginx_container" nginx -t; then
+              echo 'Nginx rejected the monitoring virtual host.' >&2
+              exit 1
+            fi
+            docker exec "$nginx_container" nginx -s reload
+          }
+
+          if ! test -s "$cert_dir/fullchain.pem" || ! test -s "$cert_dir/privkey.pem"; then
+            # Serve the HTTP-01 challenge first; no TLS files are needed for this vhost.
+            set_nginx_site deploy/nginx/monitoring-acme-challenge.conf
+            "$certbot_bin" certonly --webroot --webroot-path "$certbot_webroot" \
+              --domain monitoring.macondosoftwares.com --non-interactive --agree-tos \
+              --register-unsafely-without-email
+          else
+            # Keep the public route active while checking/renewing an existing certificate.
+            set_nginx_site deploy/nginx/monitoring.macondosoftwares.com.conf
+            "$certbot_bin" renew --cert-name monitoring.macondosoftwares.com \
+              --webroot-path "$certbot_webroot" --non-interactive
+          fi
+
+          test -s "$cert_dir/fullchain.pem" && test -s "$cert_dir/privkey.pem" || {
+            echo 'Certbot did not create the monitoring hostname certificate.' >&2
+            exit 1
+          }
+          set_nginx_site deploy/nginx/monitoring.macondosoftwares.com.conf
+          install -m 0600 "$cert_dir/fullchain.pem" secrets/tls-cert
+          install -m 0600 "$cert_dir/privkey.pem" secrets/tls-key
+
+          # Certbot's scheduled renewals must refresh both TLS consumers after deployment.
+          install -d -m 0755 /etc/letsencrypt/renewal-hooks/deploy
+          printf '%s\n' "$deploy_path" > /etc/monitoring-system-deploy-path
+          chmod 0600 /etc/monitoring-system-deploy-path
+          install -m 0750 deploy/certbot/monitoring-gateway-renew-hook.sh \
+            /etc/letsencrypt/renewal-hooks/deploy/monitoring-gateway.sh
+
+          for secret_file in grafana-admin grafana-key dashboard-read operator-token mimunicipio-prod mimunicipio-qa tls-cert tls-key; do
+            test -s "secrets/$secret_file" || { echo "Required server secret is missing: secrets/$secret_file" >&2; exit 1; }
+          done
+          chmod 0600 secrets/grafana-admin secrets/grafana-key secrets/dashboard-read secrets/operator-token secrets/mimunicipio-prod secrets/mimunicipio-qa secrets/tls-cert secrets/tls-key
+
+          docker network inspect soporte_toka_default >/dev/null || {
+            echo 'The existing Nginx Docker network soporte_toka_default was not found.' >&2
+            exit 1
+          }
+
+          # Validate the candidate inventory against server-side secrets before activation.
+          bash scripts/container-cli.sh validate --config config/inventory.operational.yaml
+
+          previous_config=''
+          if test -s config/inventory.yaml; then
+            cp config/inventory.yaml config/inventory.deploy-previous.yaml
+            previous_config=config/inventory.deploy-previous.yaml
+          fi
+          install -m 0644 config/inventory.operational.yaml config/inventory.yaml
+
+          rollback() {
+            if test -n "$previous_config" && test -s "$previous_config"; then
+              install -m 0644 "$previous_config" config/inventory.yaml
+              docker compose -f docker/compose.yaml -f docker/compose.production.yaml up -d || true
+            else
+              docker compose -f docker/compose.yaml -f docker/compose.production.yaml stop monitoring || true
+            fi
+          }
+
+          if ! docker compose -f docker/compose.yaml -f docker/compose.production.yaml up -d --build; then
+            rollback
+            exit 1
+          fi
+
+          ready=0
+          for attempt in $(seq 1 90); do
+            if curl --fail --silent --show-error --max-time 5 http://127.0.0.1:8080/ready >/dev/null; then
+              ready=1
+              break
+            fi
+            sleep 2
+          done
+          if test "$ready" -ne 1; then
+            echo 'Monitoring service did not become ready; restoring the previous inventory.' >&2
+            rollback
+            exit 1
+          fi
+
+          docker compose -f docker/compose.yaml -f docker/compose.production.yaml ps
+          REMOTE
